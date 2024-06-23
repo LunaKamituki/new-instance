@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸せok改造インスタンス</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; 
+        }
+        header {
+            background-color: #87ceeb; 
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
+        nav {
+            background: #ffeb3b; 
+            color: black;
+            padding: 1em;
+            text-align: center;
+        }
+        nav a {
+            color: black;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        main {
+            padding: 20px;
+        }
+        .topic {
+            background: white;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background: #87ceeb;
+            color: white;
+            text-align: center;
+            padding: 0.5em 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="src/style.css">
+    <style>
+        #overlay {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; 
+        }
+        #content {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+
+<header>
+    <h1>因数分解と展開の解説！</h1>
+        <button onclick="showOverlay()"><h4>ログイン画面を表示</h4></button>
+
+    <div id="overlay">
+        <div id="content">
+            <button class="close-btn" onclick="hideOverlay()">×</button>
+            <font color=”#000”>
+            <h4>ログイン</h4>
+            パスワードを入力してください
+            </font>
+            <div id="gennumber">
+                <form name="myform" onsubmit="backend(event)">
+                    <input type="text" id="gennumberform">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showOverlay() {
+            document.getElementById('overlay').style.display = 'flex';
+        }
+        
+        function hideOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function backend(event) {
+            event.preventDefault();
+            const input = document.getElementById("gennumberform").value;
+            
+            if (input === "85175") {
+                document.cookie = "yuki=True; max-age=31536000; path=/";
+                location.href = "/";
+                return;
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/answer?q=${encodeURIComponent(input)}`, true);
+            
+            xhr.onload = function () {
+                document.getElementById("gennumberform").value = xhr.responseText;
+            };
+            
+            xhr.send();
+        }
+    </script>
+
+</header>
+
+<nav>
+    <a href="#factorization">因数分解</a>
+    <a href="#expansion">展開</a>
+</nav>
+
+<main>
+    <section id="factorization" class="topic">
+        <h2>因数分解</h2>
+        <p>因数分解は、多項式を積の形に書き換える操作です。以下に簡単な問題と難しい問題の2つの例を示します。</p>
+        <h3>例題1</h3>
+        <p>例: x^2 - 4</p>
+        <p>解: これは平方差の公式を使って (x - 2)(x + 2) に因数分解できます。</p>
+        <h3>例題2</h3>
+        <p>例: x^2 - 5x + 6</p>
+        <p>解: 因数分解を用いて解くと、(x - 2)(x - 3) となります。したがって、x = 2 または x = 3 となります。</p>
+        <h3>問題</h3>
+        <h4>① (x-3)(x-1)(x+5)(x+7) - 960</h4>
+        <p>解: まず展開して整理します。</p>
+        <p>(x-3)(x-1) = x^2 - 4x + 3</p>
+        <p>(x+5)(x+7) = x^2 + 12x + 35</p>
+        <p>次に、これらを掛け合わせます。</p>
+        <p>(x^2 - 4x + 3)(x^2 + 12x + 35)</p>
+        <p>これを展開すると、x^4 + 8x^3 - 13x^2 - 132x + 105 になります。</p>
+        <p>最後に、960を引きます。</p>
+        <p>x^4 + 8x^3 - 13x^2 - 132x + 105 - 960 = x^4 + 8x^3 - 13x^2 - 132x - 855</p>
+        <p>最終的な因数分解は x^4 + 8x^3 - 13x^2 - 132x - 855 です。</p>
+
+        <h4>② a^2 - b^2 - 4c^2 - 6a + 4bc + 9</h4>
+        <p>解: 整理して因数分解します。</p>
+        <p>まず、a^2 - 6a + 9 は (a - 3)^2 になります。</p>
+        <p>次に、b^2 - 4bc + 4c^2 は (b - 2c)^2 になります。</p>
+        <p>したがって、全体を因数分解すると (a - 3)^2 - (b - 2c)^2 になります。</p>
+        <p>これを平方差の公式を使って因数分解します。</p>
+        <p>(a - 3 + b - 2c)(a - 3 - b + 2c)</p>
+
+        <h4>③ (x^2 - 15x) + (x^2 - 225)</h4>
+        <p>解: まず共通因数を見つけます。</p>
+        <p>x^2 - 15x + x^2 - 225 = 2x^2 - 15x - 225</p>
+        <p>これをさらに因数分解します。</p>
+        <p>2(x^2 - 7.5x - 112.5) = 2(x - 15)(x + 7.5)</p>
+
+        <h4>④ x^4(2x - 3y) + 27(9y - 6x)</h4>
+        <p>解: まず共通因数を見つけます。</p>
+        <p>27 を factor out します。</p>
+        <p>x^4(2x - 3y) - 27(6x - 9y) = x^4(2x - 3y) - 27(3(2x - 3y))</p>
+        <p>共通因数 (2x - 3y) を factor out します。</p>
+        <p>(2x - 3y)(x^4 - 27)</p>
+    </section>
+
+    <section id="expansion" class="topic">
+        <h2>展開</h2>
+        <p>展開は、多項式の積を和の形に書き換える操作です。以下に簡単な問題と難しい問題の2つの例を示します。</p>
+        <h3>例題1</h3>
+        <p>例: (x + 2)(x + 3)</p>
+        <p>解: これは分配法則を使って x^2 + 5x + 6 に展開できます。</p>
+        <h3>例題2</h3>
+        <p>例: (2x - 3)(x + 4)</p>
+        <p>解: これも分配法則を使って 2x^2 + 8x - 3x - 12 = 2x^2 + 5x - 12 に展開できます。</p>
+        <h3>問題</h3>
+        <h4>① (x-3)(x-1)(x+5)(x+7) - 960 を展開し因数分解を再度行います。</h4>
+        <p>解: (x-3)(x-1) = x^2 - 4x + 3</p>
+        <p>(x+5)(x+7) = x^2 + 12x + 35</p>
+        <p>これを掛け合わせて、展開します。</p>
+        <p>(x^2 - 4x + 3)(x^2 + 12x + 35) = x^4 + 8x^3 - 13x^2 - 132x + 105</p>
+        <p>最後に960を引いて再因数分解します。</p>
+        <p>x^4 + 8x^3 - 13x^2 - 132x - 855</p>
+
+        <h4>② a^2 - b^2 - 4c^2 - 6a + 4bc + 9 を展開し、同様に因数分解を行います。</h4>
+        <p>解: a^2 - 6a + 9 は (a-3)^2 です。</p>
+        <p>b^2 - 4bc + 4c^2 は (b-2c)^2 です。</p>
+        <p>平方差の公式を使って因数分解します。</p>
+        <p>(a-3)^2 - (b-2c)^2 = (a-3+b-2c)(a-3-b+2c)</p>
+
+        <h4>③ (x^2 - 15x) + (x^2 - 225) を展開して簡単化します。</h4>
+        <p>解: x^2 - 15x + x^2 - 225 = 2x^2 - 15x - 225</p>
+        <p>さらに因数分解します。</p>
+        <p>2(x^2 - 7.5x - 112.5) = 2(x-15)(x+7.5)</p>
+
+        <h4>④ x^4(2x - 3y) + 27(9y - 6x) を展開して整理します。</h4>
+        <p>解: まず共通因数を見つけます。</p>
+        <p>x^4(2x - 3y) - 27(6x - 9y)</p>
+        <p>27 を factor out します。</p>
+        <p>x^4(2x - 3y) - 27(3(2x - 3y))</p>
+        <p>共通因数 (2x - 3y) を factor out します。</p>
+        <p>(2x - 3y)(x^4 - 27)</p>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 因数分解と展開の解説　<font size="2px">幸せならokです！</font></p>
+</footer>
+
+</body>
+</html>
