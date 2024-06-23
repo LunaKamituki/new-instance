@@ -1,3 +1,10 @@
+幸せok改造インスタンス
+ <h3>このリポジトリはvercelのデプロイに対応しています</h3>
+掲示板機能は使えません
+<br><br>
+とりあえずインビのインスタンス置いとく<br>
+https://docs.invidious.io/instances/<br>
+https://invidious.namazso.eu/<br>
 偽装ページが違うやつ  
 ブログをブロックされるとき用  
 ASGIで動く  
@@ -13,7 +20,5 @@ Renderを使用する場合の手順
 2.リポジトリを作る(名前はなんでもいい)(プライベートリポジトリにすることをおすすめします)  
 3.import codeを押して https://github.com/mochidukiyukimi/Yuki-Youtube-slim/ と入力  
 4.render.yamlを開いて編集(鉛筆のマーク)を押し、nameの横のyuki-youtube-slimをサイトのurlの最初の部分にしたい文字列に変更する。(yuki-yだったらurlはhttps://yuki-y.onrender.comになる)  
-5.Deploy to renderボタンを押し、Service Group Nameに適当な文字列を入れてapply(事前にrenderのアカウントを作っておく)
-<a href="https://render.com/deploy?repo=https://github.com/mochidukiyukimi/Yuki-Youtube-slim-2">
-<img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render">
-</a>
+5.Deploy to renderボタンを押し、Service Group Nameに適当な文字列を入れてapply(事前にrenderのアカウントを作っておく)<br>
+改装インスタンスなのでデプロイボタンは使えません
