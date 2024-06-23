@@ -1,6 +1,6 @@
 幸せok改造インスタンス
  <h3>このリポジトリはvercelのデプロイに対応しています</h3>
-掲示板機能は使えません
+vercelでデプロイした場合は掲示板機能は使えません
 <br><br>
 とりあえずインビのインスタンス置いとく<br>
 https://docs.invidious.io/instances/<br>
