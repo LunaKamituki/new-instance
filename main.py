@@ -8,6 +8,7 @@ import os
 import subprocess
 from cache import cache
 
+REDIRECT_PATH = "siawaseok"
 
 max_api_wait_time = 3
 max_time = 10
@@ -180,7 +181,7 @@ from typing import Union
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/css", StaticFiles(directory="./css"), name="static")
-app.mount("/siawaseok", StaticFiles(directory="./blog", html=True), name="static")
+app.mount(f"/{REDIRECT_PATH}", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 from fastapi.templating import Jinja2Templates
@@ -196,7 +197,7 @@ def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
         return template("home.html", {"request": request})
     
     print(check_cookie(yuki))
-    return RedirectResponse("/siawaseok")
+    return RedirectResponse(f"/{REDIRECT_PATH}")
 
 @app.get('/watch', response_class=HTMLResponse)
 def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
