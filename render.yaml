@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: yuki-tangolevel
+    name: new-instance
     env: python
     region: Oregon
     plan: free
