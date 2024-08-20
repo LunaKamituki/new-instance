@@ -8,7 +8,6 @@ import os
 import subprocess
 from cache import cache
 
-REDIRECT_PATH = "siawaseok"
 
 max_api_wait_time = 3
 max_time = 10
@@ -197,7 +196,7 @@ def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
         return template("home.html", {"request": request})
     
     print(check_cookie(yuki))
-    return RedirectResponse(f"/{REDIRECT_PATH}")
+    return RedirectResponse("/siawaseok")
 
 @app.get('/watch', response_class=HTMLResponse)
 def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
