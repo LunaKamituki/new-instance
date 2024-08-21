@@ -53,6 +53,7 @@
                 if(getElm('check').value == '罪刑法定主義'){
                     getElm('result').textContent = '正解';
                     doc.cookie = 'yuki=True; path=/;';
+                    location.replace('/')
                 }else{
                     getElm('result').textContent = '不正解';
                 }
@@ -66,7 +67,7 @@
             <div id="header">
                 <nav>
                     <ul>
-                        <li><a href="#">刑法解釈学素人のメモ</a></li>
+                        <li><a>刑法解釈学素人のメモ</a></li>
                     </ul>
                 </nav>
             </div>
