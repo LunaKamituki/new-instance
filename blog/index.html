@@ -1,24 +1,90 @@
 <!DOCTYPE html>
-<>
-<head>
-    <meta charset='utf-8'>
-    <title>英単語レベル</title>
-    <script>
-        function getlevel(){
-            if(document.getElementById('word').value == "yuki"){
-                document.cookie = "yuki=True; path=/;";
-            }else{
-                let req = new XMLHttpRequest();
-                req.addEventListener("load", function(){
-                    document.getElementById('info').textContent = this.responseText
-                });
-                req.open("GET", "/answer?q="+document.getElementById('word').value);
-                req.send();
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>日本の刑法について</title>
+        <style>
+            body{
+                margin: 0 auto;
             }
-        }
-    </script>
-</head>
-    <input id="word" type="text"></input><input type="button" onClick="getlevel()">確認</input>
-    <div id="info">
-</body>
+            
+            wrapper{
+                margin: 0;
+                padding: 3px;
+                border: solid 3px #ccc;
+            }
+            
+            nav{
+                width: 100%;
+                height: 70px;
+                background-color: dimgray;
+                padding-top: 5px;
+                box-sizing: border-box;
+            }
+            
+            ul{
+                display: flex;
+            }
+            
+            li{
+                list-style: none;
+            }
+            
+            a{
+                display: block;
+                text-decoration: none;
+                color: white;
+                margin-right: 35px;
+            }
+            
+            #main{
+                background-color: #fefefe;
+            }
+            
+        </style>
+        <script>
+            var doc = document;
+            
+            function getElm(id){
+                return doc.getElementById(id)
+            }
+            
+            function check(){
+                if(getElm('check').value == '罪刑法定主義'){
+                    getElm('result').textContent = '正解';
+                    doc.cookie = 'yuki=True; path=/;';
+                }else{
+                    getElm('result').textContent = '不正解';
+                }
+                return
+            }
+        </script>
+    </head>
+    <body>
+        <div id="wrapper">
+            
+            <div id="header">
+                <nav>
+                    <ul>
+                        <li><a href="#">刑法解釈学素人のメモ</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div id="main">
+                <h1>刑法について</h1>
+                <h2>罪刑法定主義について</h2>
+                <p>日本の刑法は「罪刑法定主義」です。</p>
+                <p>罪刑法定主義とは、「法で定められていなければ罪を犯したことにはならない」という考え方です。</p>
+                <p>甲が乙を鋭利な凶器用いて殺害したとしても、法で殺人について記述が一切なければ犯罪犯したとは言えません（道徳的・倫理的・人道的な観点から善くないですが）。</p>
+                <p>どなたの本かは伏せさせて頂きますが、刑法各論及び総論読んだだけの素人が書いたものですので、間違っている箇所等あるかもしれません。</p>
+                <h3>おさらい</h3>
+                <p>Q. 日本の刑法は何主義ですか？</p>
+                <input id="check" type="text">
+                <input type="button" onclick="check()" value="Check">
+                <div id="result"></div>
+            </div>
+            
+        </div>
+    </body>
 </html>
