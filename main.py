@@ -17,8 +17,8 @@ version = "1.0"
 
 def update_source():
     source = {
-        "1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/1.html').text,
-        "2": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/2.html').text
+        "bbs_1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_1.html').text
+        "shortcut_help": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/shortcut_help.html').text
     }
     return source
 
@@ -278,7 +278,7 @@ def thumbnail(v:str):
 def view_bbs(request: Request,name: Union[str, None] = "",seed:Union[str,None]="",channel:Union[str,None]="main",verify:Union[str,None]="false",yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text + update_source()['1'])
+    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text + update_source()['bbs_1'] + update_source()['shortcut_help'])
     return res
 
 @cache(seconds=5)
@@ -296,7 +296,7 @@ def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,N
         return redirect("/")
     t = requests.get(fr"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}",cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
-        return HTMLResponse(t.text + update_source()['1'])
+        return HTMLResponse(t.text + update_source()['bbs_1'] + update_source()['shortcut_help'])
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
 @cache(seconds=30)
