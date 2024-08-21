@@ -17,7 +17,7 @@ version = "1.0"
 
 def update_source():
     source = {
-        "bbs_1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_1.html').text
+        "bbs_1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_1.html').text,
         "shortcut_help": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/shortcut_help.html').text
     }
     return source
