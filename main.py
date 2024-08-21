@@ -238,15 +238,6 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     t = get_channel(channelid)
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
 
-@app.get("/answer", response_class=HTMLResponse)
-def set_cokie(q:str):
-    t = get_level(q)
-    if t > 5:
-        return f"level{t}\n推測を推奨する"
-    elif t == 0:
-        return "level12以上\nほぼ推測必須"
-    return f"level{t}\n覚えておきたいレベル"
-
 @app.get("/playlist", response_class=HTMLResponse)
 def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
