@@ -18,6 +18,7 @@ version = "1.0"
 def update_source():
     source = {
         "bbs_1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_1.html').text,
+        "bbs_2": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_2.html').text,
         "shortcut_help": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/shortcut_help.html').text
     }
     return source
@@ -269,7 +270,7 @@ def thumbnail(v:str):
 def view_bbs(request: Request,name: Union[str, None] = "",seed:Union[str,None]="",channel:Union[str,None]="main",verify:Union[str,None]="false",yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text + update_source()['bbs_1'] + update_source()['shortcut_help'])
+    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text + update_source()['bbs_1'] + update_source()['bbs_2'] + update_source()['bbs_2'] + update_source()['shortcut_help'])
     return res
 
 @cache(seconds=5)
