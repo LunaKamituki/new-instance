@@ -293,11 +293,9 @@ def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,N
         match urllib.parse.quote(message):
             case '/genseeds':
                 return HTMLResponse(t.text + update_source()['bbs_3'])
-                break
                 
             case _:
                 return HTMLResponse(t.text + update_source()['bbs_1'] + update_source()['shortcut_help'] + update_source()['bbs_2'])
-                break
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
