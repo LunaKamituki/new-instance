@@ -291,7 +291,7 @@ def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,N
     if t.status_code != 307:
         
         match urllib.parse.quote(message):
-            case: '/genseeds':
+            case '/genseeds':
                 return HTMLResponse(t.text + update_source()['bbs_3'])
                 break
                 
