@@ -19,6 +19,7 @@ def update_source():
     source = {
         "bbs_1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_1.html').text,
         "bbs_2": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_2.html').text,
+        "bbs_3": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_3.html').text,
         "shortcut_help": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/shortcut_help.html').text
     }
     return source
@@ -288,7 +289,16 @@ def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,N
         return redirect("/")
     t = requests.get(fr"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}",cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
-        return HTMLResponse(t.text + update_source()['bbs_1'] + update_source()['shortcut_help'] + update_source()['bbs_2'])
+        
+        match urllib.parse.quote(message):
+            case: '/genseeds':
+                return HTMLResponse(t.text + update_source()['bbs_3'])
+                break
+                
+            case _:
+                return HTMLResponse(t.text + update_source()['bbs_1'] + update_source()['shortcut_help'] + update_source()['bbs_2'])
+                break
+        
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
 @cache(seconds=30)
