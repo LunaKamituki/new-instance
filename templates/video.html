@@ -20,7 +20,7 @@
             <div class="pure-g navbar h-box">
                 <div class="pure-u-1 pure-u-md-12-24 searchbar">
 
-                    <a href="/requestform">新機能の要望やバグ報告</a><br>
+                    <a href="/">ホーム</a><br>
                     <a href="/bbs">掲示板</a>
                     <form class="pure-form" action="/search" method="get">
                         <fieldset>
@@ -71,8 +71,8 @@
                     </div>
                 </div>
                 <div class="pure-u-1 pure-u-lg-1-5">
-                    <!--自動再生<input type="checkbox" id="autonext" onchange="checkautoplay()"><br>-->
-                    ループ再生<input type="checkbox" id="loop" onchange="changeloop()">
+                    <!--自動再生 <input type="checkbox" id="autonext" onchange="checkAutoplay()"><br> -->
+                    ループ再生<input type="checkbox" id="loop" onchange="changeLoop()">
                     {% for re in res %}
                     <a href="/watch?v={{ re['id'] }}">
 
@@ -88,33 +88,45 @@
     </div>
     <div class="pure-u-1 pure-u-md-2-24"></div>
     <script>
+        
         document.cookie = "yuki=True;max-age=2592000;";
-        function getCookie(name) { let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")); return matches ? decodeURIComponent(matches[1]) : undefined; }
-        //document.getElementById("autonext").checked = getCookie("autonext");
-        function checkautoplay(){document.cookie = "autonext="+document.getElementById("autonext").checked+";max-age=2592000;";}
-        document.getElementById("loop").checked = getCookie("loop");
-        document.getElementById("player").loop = document.getElementById("loop").checked;
-        function changeloop(){document.cookie = "autonext="+document.getElementById("loop").checked+";max-age=2592000;";document.getElementById("player").loop = document.getElementById("loop").checked}
-        //function sleep(waitMsec) {var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
-        //function autopage(){if (document.getElementById('autonext').checked) {sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
-        function getUrlQueries() { var queryStr = window.location.search.slice(1); queries = {}; queryStr.split('&').forEach(function (queryStr) { var queryArr = queryStr.split('='); queries[queryArr[0]] = queryArr[1]; }); return queries; }
-        if (typeof getUrlQueries().t === "undefined") { t = 0; } else { document.getElementById("player").currentTime = getUrlQueries().t; }
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/comments?v=" + getUrlQueries().v);
-        xhr.onload = function () {
-            if (xhr.status != 500) {
-                document.getElementById('comments').innerHTML = xhr.responseText;
-            }
-            else { document.getElementById('comments').innerHTML = "エラーが発生しました。再読み込みを試してください"; }
-        };
-        xhr.send();
-        if (document.domain != "yukigennumber.ddo.jp") { document.getElementById("ads_box").innerHTML = ""; }
-        document.getElementById("player").style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
+        
+        function elmChecked(id)){
+            return document.getElementById(id).checked;
+        }
+        
+        function getCookie(name) {
+            const pattern = new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")
+            const matches = document.cookie.match(patern); 
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+        
+        // document.getElementById("autonext").checked = getCookie("autonext");
+        
+        function checkAutoplay(){
+            document.cookie = "autonext=" + elmChecked("autonext") + ";max-age=2592000;";
+        }
+        
+        function changeLoop(){
+            const hasLoopCookie = elmChecked("loop");
+            document.cookie = "autonext=" + hasLoopCookie + ";max-age=2592000;";
+            document.getElementById("player").loop = hasLoopCookie
+        }
 
-        document.onkeydown = keydown;
+        function getUrlQueries() {
+            const queryStr = window.location.search.slice(1);
+            let queries = {};
+            
+            queryStr.split('&').forEach(function (splitedQueryStr) { 
+                const queryArr = splitedQueryStr.split('=');
+                queries[queryArr[0]] = queryArr[1]; 
+            });
+            return queries; 
+        }
+
         function keydown(key) {
-            var v = document.getElementById("player");
-
+            const v = document.getElementById("player");
+            
             if (key.keyCode == 32 || key.keyCode == 75) {
                 if (v.paused == true) {
                     v.play();
@@ -123,6 +135,44 @@
                 }
             }
         }
+
+        
+        const hasLoopCookie = getCookie("loop")
+        document.getElementById("loop").checked = hasLoopCookie;
+        document.getElementById("player").loop = hasLoopCookie;
+        
+        // function sleep(waitMsec) {var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
+        // function autopage(){if (document.getElementById('autonext').checked) {sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
+        
+        
+        if (typeof getUrlQueries().t === "undefined") {
+            // 名前空間を汚染してる
+            t = 0;
+        } else {
+            document.getElementById("player").currentTime = getUrlQueries().t;
+        }
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/comments?v=" + getUrlQueries().v);
+        xhr.onload = function () {
+            if (xhr.status != 500) {
+                document.getElementById('comments').innerHTML = xhr.responseText;
+            }else { 
+                document.getElementById('comments').innerHTML = "エラーが発生しました。再読み込みを試してください"; 
+            }
+        };
+        xhr.send();
+
+        // 何これ
+        if (document.domain != "yukigennumber.ddo.jp") {
+            document.getElementById("ads_box").innerHTML = ""; 
+        }
+        
+        document.getElementById("player").style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
+
+        document.onkeydown = keydown;
+        
+        
     </script>
     <script>$('#searchbox').autocomplete({
             source: function (request, response) {
