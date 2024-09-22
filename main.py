@@ -15,14 +15,9 @@ apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKami
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
 
-def update_source():
-    source = {
-        "bbs_1": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_1.html').text,
-        "bbs_2": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_2.html').text,
-        "bbs_3": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/bbs_3.html').text,
-        "shortcut_help": requests.get('https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/shortcut_help.html').text
-    }
-    return source
+def getSource(name):
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text,
+    
 
 os.system("chmod 777 ./yukiverify")
 
@@ -271,7 +266,7 @@ def thumbnail(v:str):
 def view_bbs(request: Request,name: Union[str, None] = "",seed:Union[str,None]="",channel:Union[str,None]="main",verify:Union[str,None]="false",yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text + update_source()['bbs_1'] + update_source()['shortcut_help'] + update_source()['bbs_2'])
+    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
     return res
 
 @cache(seconds=5)
@@ -292,10 +287,10 @@ def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,N
         
         match urllib.parse.quote(message):
             case '/genseeds':
-                return HTMLResponse(t.text + update_source()['bbs_3'])
+                return HTMLResponse(t.text + getSource('bbs_3'))
                 
             case _:
-                return HTMLResponse(t.text + update_source()['bbs_1'] + update_source()['shortcut_help'] + update_source()['bbs_2'])
+                return HTMLResponse(t.text + getSource('bbs_1') + getSource('shortcut_help']) + getSource('bbs_2'))
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
