@@ -103,9 +103,11 @@
         
         // document.getElementById("autonext").checked = getCookie("autonext");
         
+        /* 使われていないし"check"じゃない
         function checkAutoplay(){
             document.cookie = "autonext=" + elmChecked("autonext") + ";max-age=2592000;";
         }
+        */
         
         function changeLoop(){
             const hasLoopCookie = elmChecked("loop");
@@ -113,15 +115,9 @@
             document.getElementById("player").loop = hasLoopCookie
         }
 
-        function getUrlQueries() {
-            const queryStr = window.location.search.slice(1);
-            let queries = {};
-            
-            queryStr.split('&').forEach(function (splitedQueryStr) { 
-                const queryArr = splitedQueryStr.split('=');
-                queries[queryArr[0]] = queryArr[1]; 
-            });
-            return queries; 
+        function getUrlQueries(name) {
+            const url = new URL(window.location.href)
+            return url.searchParams.get(name)
         }
 
         function keydown(key) {
@@ -135,7 +131,8 @@
                 }
             }
         }
-
+        
+        document.addEventListner('keydown', keydown);
         
         const hasLoopCookie = getCookie("loop")
         document.getElementById("loop").checked = hasLoopCookie;
@@ -144,16 +141,21 @@
         // function sleep(waitMsec) {var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
         // function autopage(){if (document.getElementById('autonext').checked) {sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
         
-        
-        if (typeof getUrlQueries().t === "undefined") {
-            // 名前空間を汚染してる
+        /* 一応残しておく
+        if (typeof getUrlQueries('t') === "undefined") {
+            // 名前空間を汚染してるし使われている箇所が見あたらない
             t = 0;
         } else {
-            document.getElementById("player").currentTime = getUrlQueries().t;
+            document.getElementById("player").currentTime = getUrlQueries('t');
         }
-        
+        */
+
+
+        if (!getUrlQueries('t') isinstanceof undefined) {
+            document.getElementById("player").currentTime = getUrlQueries('t');
+        }
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/comments?v=" + getUrlQueries().v);
+        xhr.open("GET", "/comments?v=" + getUrlQueries('v'));
         xhr.onload = function () {
             if (xhr.status != 500) {
                 document.getElementById('comments').innerHTML = xhr.responseText;
@@ -162,22 +164,13 @@
             }
         };
         xhr.send();
-
-        // 何これ
-        if (document.domain != "yukigennumber.ddo.jp") {
-            document.getElementById("ads_box").innerHTML = ""; 
-        }
         
         document.getElementById("player").style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
-
-        document.onkeydown = keydown;
-        
-        
     </script>
     <script>$('#searchbox').autocomplete({
             source: function (request, response) {
                 {
-                    var url = "/suggest?keyword=" + request.term
+                    var url = "/suggest?keyword=" + ;request.term
                     var xhr = new XMLHttpRequest();
                     xhr.open("GET", url);
                     xhr.onload = function () {
