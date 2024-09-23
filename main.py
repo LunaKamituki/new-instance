@@ -139,7 +139,7 @@ def get_channel(channelid):
         apichannels.append(apichannels[0])
         apichannels.remove(apichannels[0])
         raise APItimeoutError("APIがチャンネルを返しませんでした")
-    return [[{"title":i["title"], "id":i["videoId"], "authorId":t["authorId"], "author":t["author"], "published":i["publishedText"], "type":"video"} for i in t["latestVideos"]],{"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
+    return [[{"title":i["title"], "id":i["videoId"], "authorId":t["authorId"], "author":t["author"], "published":i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
@@ -206,7 +206,7 @@ template = Jinja2Templates(directory='templates').TemplateResponse
 def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
     if check_cokie(yuki):
         response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-        return template("home.html",{"request": request})
+        return template("home.html", {"request": request})
     print(check_cokie(yuki))
     return redirect("/word")
 
@@ -255,7 +255,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    return template("info.html",{"request": request, "Youtube_API":apis[0], "Channel_API":apichannels[0], "Comments_API":apicomments[0]})
+    return template("info.html", {"request": request, "Youtube_API":apis[0], "Channel_API":apichannels[0], "Comments_API":apicomments[0]})
 
 @app.get("/suggest")
 def suggest(keyword:str):
@@ -263,7 +263,7 @@ def suggest(keyword:str):
 
 @app.get("/comments")
 def comments(request: Request, v:str):
-    return template("comments.html",{"request": request, "comments":get_comments(v)})
+    return template("comments.html", {"request": request, "comments":get_comments(v)})
 
 @app.get("/thumbnail")
 def thumbnail(v:str):
@@ -319,8 +319,8 @@ def home():
 
 @app.exception_handler(500)
 def page(request: Request, __):
-    return template("APIwait.html",{"request": request}, status_code=500)
+    return template("APIwait.html", {"request": request}, status_code=500)
 
 @app.exception_handler(APItimeoutError)
 def APIwait(request: Request, exception: APItimeoutError):
-    return template("APIwait.html",{"request": request}, status_code=500)
+    return template("APIwait.html", {"request": request}, status_code=500)

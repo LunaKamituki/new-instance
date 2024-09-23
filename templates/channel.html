@@ -94,7 +94,7 @@
             $('#searchbox').autocomplete({
                 source: function (request, response) {
                     {
-                        var url = "/suggest?keyword="+ request.term
+                        var url = "/suggest?keyword=" + request.term;
                         var xhr = new XMLHttpRequest();
                         xhr.open("GET", url);
                         xhr.onload = function() {

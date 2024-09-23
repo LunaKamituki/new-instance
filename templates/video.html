@@ -40,7 +40,7 @@
                 <div class="pure-g">
                     <div class="pure-u-1 pure-u-lg-1-5">
                         <a href="{{ videourls[0] }}" target="_blank">ダウンロード</a><br>
-                        <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.protocol+'//'+document.domain+'/watch?v={{ videoid }}'+'&t='+Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
+                        <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.protocol + '//' + document.domain + '/watch?v={{ videoid }}' + '&t=' + Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
                         <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.href})}">動画を共有</a><br>
                         <hr>
                     </div>
@@ -103,7 +103,7 @@
             function changeLoop() {      
                 const hasLoopCookie = elmChecked("loop");
                 document.cookie = "autonext=" + hasLoopCookie + ";max-age=2592000;";
-                document.getElementById("player").loop = hasLoopCookie
+                document.getElementById("player").loop = hasLoopCookie;
             }
 
             function getUrlQueries(name) {      
@@ -115,7 +115,7 @@
                 if (key.keyCode == 32 || key.keyCode == 75) {
 
                     const v = document.getElementById("player");
-                    
+
                     if (v.paused == true) {
                         v.play();
                     } else {
@@ -164,7 +164,7 @@
             $('#searchbox').autocomplete({
                 source: function (request, response) {      
                     {
-                        const url = "/suggest?keyword=" + request.term
+                        const url = "/suggest?keyword=" + request.term;
                         let xhr = new XMLHttpRequest();
                         xhr.open("GET", url);
                         xhr.onload = function () {      
