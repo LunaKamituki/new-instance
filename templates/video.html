@@ -141,7 +141,7 @@
             */
 
 
-            if (!getUrlQueries('t') isinstanceof undefined) {
+            if (!getUrlQueries('t') instanceof undefined) {
                 document.getElementById("player").currentTime = getUrlQueries('t');
             }
             
@@ -162,7 +162,7 @@
             $('#searchbox').autocomplete({
                 source: function (request, response) {
                     {
-                        const url = "/suggest?keyword=" + ;request.term
+                        const url = "/suggest?keyword=" + request.term
                         let xhr = new XMLHttpRequest();
                         xhr.open("GET", url);
                         xhr.onload = function () {
