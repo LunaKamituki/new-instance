@@ -40,8 +40,8 @@
                 <div class="pure-g">
                     <div class="pure-u-1 pure-u-lg-1-5">
                         <a href="{{ videourls[0] }}" target="_blank">ダウンロード</a><br>
-                        <a href="javascript:{navigator.share({title: '動画を共有',text: '{{videotitle}}',url: location.protocol+'//'+document.domain+'/watch?v={{ videoid }}'+'&t='+Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
-                        <a href="javascript:{navigator.share({title: '動画を共有',text: '{{videotitle}}',url: location.href})}">動画を共有</a><br>
+                        <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.protocol+'//'+document.domain+'/watch?v={{ videoid }}'+'&t='+Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
+                        <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.href})}">動画を共有</a><br>
                         <hr>
                     </div>
                     <div class="pure-u-1 pure-u-lg-3-5">
@@ -82,11 +82,11 @@
         <script>
             document.cookie = "yuki=True;max-age=2592000;";
         
-            function elmChecked(id){
+            function elmChecked(id) {     
                 return document.getElementById(id).checked;
             }
         
-            function getCookie(name) {
+            function getCookie(name) {     
                 const pattern = new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")
                 const matches = document.cookie.match(patern); 
                 return matches ? decodeURIComponent(matches[1]) : undefined;
@@ -95,25 +95,27 @@
             // document.getElementById("autonext").checked = getCookie("autonext");
         
             /* 使われていないし"check"じゃない
-            function checkAutoplay(){
+            function checkAutoplay() {      
                 document.cookie = "autonext=" + elmChecked("autonext") + ";max-age=2592000;";
             }
             */
         
-            function changeLoop() {
+            function changeLoop() {      
                 const hasLoopCookie = elmChecked("loop");
                 document.cookie = "autonext=" + hasLoopCookie + ";max-age=2592000;";
                 document.getElementById("player").loop = hasLoopCookie
             }
 
-            function getUrlQueries(name) {
+            function getUrlQueries(name) {      
                 const url = new URL(window.location.href)
                 return url.searchParams.get(name)
             }
 
-            function keydown(key) {            
+            function keydown(key) {                  
                 if (key.keyCode == 32 || key.keyCode == 75) {
+
                     const v = document.getElementById("player");
+                    
                     if (v.paused == true) {
                         v.play();
                     } else {
@@ -128,8 +130,8 @@
             document.getElementById("loop").checked = hasLoopCookie;
             document.getElementById("player").loop = hasLoopCookie;
         
-            // function sleep(waitMsec) {var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
-            // function autopage(){if (document.getElementById('autonext').checked) {sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
+            // function sleep(waitMsec) {      var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
+            // function autopage() { if (document.getElementById('autonext').checked) {      sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
         
             /* 一応残しておく
             if (typeof getUrlQueries('t') === "undefined") {
@@ -147,7 +149,7 @@
             
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "/comments?v=" + getUrlQueries('v'));
-            xhr.onload = function () {
+            xhr.onload = function () {      
                 if (xhr.status != 500) {
                     document.getElementById('comments').innerHTML = xhr.responseText;
                 }else { 
@@ -160,12 +162,12 @@
         </script>
         <script>
             $('#searchbox').autocomplete({
-                source: function (request, response) {
+                source: function (request, response) {      
                     {
                         const url = "/suggest?keyword=" + request.term
                         let xhr = new XMLHttpRequest();
                         xhr.open("GET", url);
-                        xhr.onload = function () {
+                        xhr.onload = function () {      
                             response(JSON.parse(xhr.responseText));
                         }
                         xhr.send();
