@@ -290,7 +290,7 @@ def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,N
                 return HTMLResponse(t.text + getSource('bbs_3'))
                 
             case _:
-                return HTMLResponse(t.text + getSource('bbs_1') + getSource('shortcut_help']) + getSource('bbs_2'))
+                return HTMLResponse(t.text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
