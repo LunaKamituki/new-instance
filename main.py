@@ -16,7 +16,7 @@ url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-yout
 version = "1.0"
 
 def getSource(name):
-    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text,
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text
     
 
 os.system("chmod 777 ./yukiverify")
