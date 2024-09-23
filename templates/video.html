@@ -82,7 +82,7 @@
         <script>
             document.cookie = "yuki=True;max-age=2592000;";
         
-            function elmChecked(id)){
+            function elmChecked(id){
                 return document.getElementById(id).checked;
             }
         
@@ -100,7 +100,7 @@
             }
             */
         
-            function changeLoop(){
+            function changeLoop() {
                 const hasLoopCookie = elmChecked("loop");
                 document.cookie = "autonext=" + hasLoopCookie + ";max-age=2592000;";
                 document.getElementById("player").loop = hasLoopCookie
@@ -111,10 +111,9 @@
                 return url.searchParams.get(name)
             }
 
-            function keydown(key) {
-                const v = document.getElementById("player");
-            
+            function keydown(key) {            
                 if (key.keyCode == 32 || key.keyCode == 75) {
+                    const v = document.getElementById("player");
                     if (v.paused == true) {
                         v.play();
                     } else {
