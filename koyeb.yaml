@@ -1,0 +1,8 @@
+name: new-instance
+services:
+  - name: new-instance
+    type: web
+    env: python
+    region: Oregon
+    build_command: "pip install -r requirements.txt"
+    start_command: "uvicorn --port $PORT --host 0.0.0.0 main:app"
