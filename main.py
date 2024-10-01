@@ -15,6 +15,7 @@ apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKami
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
 
+@cache(seconds=60)
 def getSource(name):
     return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text
     
@@ -36,7 +37,7 @@ def is_json(json_str):
         pass
     return result
 
-def apirequest(url, apis):
+def apirequest(url, apis, globalListName):
     starttime = time.time()
 
     for api in apis:
@@ -49,12 +50,34 @@ def apirequest(url, apis):
                 return res.text
             else:
                 print(f"エラー:{api}")
-                apis.append(api)
-                apis.remove(api)
+                match globalListName:
+                    case 'apis':  
+                        global apis
+                        apis.append(api)
+                        apis.remove(api)
+                    case 'apichannels':
+                        global apichannels
+                        apichannels.append(api)
+                        apichannels.remove(api)
+                    case 'apicomments':
+                        global apicomments
+                        apicomments.append(api)
+                        apicomments.remove(api)
         except:
             print(f"タイムアウト:{api}")
-            apis.append(api)
-            apis.remove(api)
+            match globalListName:
+                    case 'apis':  
+                        global apis
+                        apis.append(api)
+                        apis.remove(api)
+                    case 'apichannels':
+                        global apichannels
+                        apichannels.append(api)
+                        apichannels.remove(api)
+                    case 'apicomments':
+                        global apicomments
+                        apicomments.append(api)
+                        apicomments.remove(api)
     
     raise APItimeoutError("APIがタイムアウトしました")
 
@@ -64,12 +87,12 @@ def get_info(request):
 
 def get_data(videoid):
     global logs
-    t = json.loads(apirequest(fr"/videos/{urllib.parse.quote(videoid)}", apis))
+    t = json.loads(apirequest(fr"/videos/{urllib.parse.quote(videoid)}", apis, 'apis'))
     return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
     global logs
-    t = json.loads(apirequest(fr"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis))
+    t = json.loads(apirequest(fr"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis, 'apis'))
 
     def load_search(i):
         if i["type"] == "video":
@@ -85,7 +108,7 @@ def get_search(q, page):
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apirequest(fr"/channels/{urllib.parse.quote(channelid)}", apichannels))
+    t = json.loads(apirequest(fr"/channels/{urllib.parse.quote(channelid)}", apichannels, 'apichannels'))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
         apichannels.append(apichannels[0])
@@ -94,7 +117,7 @@ def get_channel(channelid):
     return [[{"title": i["title"], "id": i["videoId"], "authorId":t["authorId"], "author":t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
-    t = json.loads(apirequest(fr"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis))["videos"]
+    t = json.loads(apirequest(fr"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis, 'apis'))["videos"]
     return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type":"video"} for i in t]
 
 def get_comments(videoid):
@@ -102,7 +125,7 @@ def get_comments(videoid):
     return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 def get_replies(videoid, key):
-    t = json.loads(apirequest(fr"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments))["contentHtml"]
+    t = json.loads(apirequest(fr"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments, 'apicomments'))["contentHtml"]
 
 '''
 def get_level(word):
@@ -248,7 +271,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
-@cache(seconds=30)
+@cache(seconds=60)
 def how_cached():
     return requests.get(fr"{url}bbs/how").text
 
