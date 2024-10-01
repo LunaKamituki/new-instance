@@ -44,7 +44,7 @@ def apirequest(url, apis):
             break
         
         try:
-            res = requests.get(api+url, timeout=max_api_wait_time)
+            res = requests.get(api + 'api/v1' + url, timeout=max_api_wait_time)
             if res.status_code == 200 and is_json(res.text):
                 return res.text
             else:
@@ -64,53 +64,54 @@ def get_info(request):
 
 def get_data(videoid):
     global logs
-    t = json.loads(apirequest(r"api/v1/videos/" + urllib.parse.quote(videoid), apis))
-    return [{"id":i["videoId"], "title":i["title"], "authorId":i["authorId"], "author":i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
+    t = json.loads(apirequest(fr"/videos/{urllib.parse.quote(videoid)}", apis))
+    return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
     global logs
-    t = json.loads(apirequest(fr"api/v1/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis))
+    t = json.loads(apirequest(fr"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis))
 
     def load_search(i):
         if i["type"] == "video":
-            return {"title":i["title"], "id":i["videoId"], "authorId":i["authorId"], "author":i["author"], "length":str(datetime.timedelta(seconds=i["lengthSeconds"])), "published":i["publishedText"], "type":"video"}
+            return {"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "length":str(datetime.timedelta(seconds=i["lengthSeconds"])), "published": i["publishedText"], "type":"video"}
         elif i["type"] == "playlist":
-            return {"title":i["title"], "id":i["playlistId"], "thumbnail":i["videos"][0]["videoId"], "count":i["videoCount"], "type":"playlist"}
+            return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type":"playlist"}
         else:
             if i["authorThumbnails"][-1]["url"].startswith("https"):
-                return {"author":i["author"], "id":i["authorId"], "thumbnail":i["authorThumbnails"][-1]["url"], "type":"channel"}
+                return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type":"channel"}
             else:
-                return {"author":i["author"], "id":i["authorId"], "thumbnail":r"https://"+i["authorThumbnails"][-1]["url"], "type":"channel"}
+                return {"author": i["author"], "id": i["authorId"], "thumbnail":fr"https://{i["authorThumbnails"][-1]["url"]}", "type":"channel"}
     return [load_search(i) for i in t]
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apirequest(r"api/v1/channels/" + urllib.parse.quote(channelid), apichannels))
+    t = json.loads(apirequest(fr"/channels/{urllib.parse.quote(channelid)}", apichannels))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
         apichannels.append(apichannels[0])
         apichannels.remove(apichannels[0])
         raise APItimeoutError("APIがチャンネルを返しませんでした")
-    return [[{"title":i["title"], "id":i["videoId"], "authorId":t["authorId"], "author":t["author"], "published":i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
+    return [[{"title": i["title"], "id": i["videoId"], "authorId":t["authorId"], "author":t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
-    t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page), apis))["videos"]
-    return [{"title":i["title"], "id":i["videoId"], "authorId":i["authorId"], "author":i["author"], "type":"video"} for i in t]
+    t = json.loads(apirequest(fr"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis))["videos"]
+    return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type":"video"} for i in t]
 
 def get_comments(videoid):
-    t = json.loads(apirequest(r"api/v1/comments/"+ urllib.parse.quote(videoid)+"?hl=jp", apicomments))["comments"]
-    return [{"author":i["author"], "authoricon":i["authorThumbnails"][-1]["url"], "authorid":i["authorId"], "body":i["contentHtml"].replace("\n", "<br>")} for i in t]
+    t = json.loads(apirequest(fr"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments))["comments"]
+    return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 def get_replies(videoid, key):
-    t = json.loads(apirequest(fr"api/v1/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments))["contentHtml"]
+    t = json.loads(apirequest(fr"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments))["contentHtml"]
 
+'''
 def get_level(word):
     for i1 in range(1, 13):
         with open(f'Level{i1}.txt', 'r', encoding='UTF-8', newline='\n') as f:
             if word in [i2.rstrip("\r\n") for i2 in f.readlines()]:
                 return i1
     return 0
-
+'''
 
 def check_cokie(cookie):
     print(cookie)
@@ -126,8 +127,6 @@ def get_verifycode():
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
         return None
-
-
 
 
 
@@ -148,10 +147,6 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 from fastapi.templating import Jinja2Templates
 template = Jinja2Templates(directory='templates').TemplateResponse
-
-
-
-
 
 
 @app.get("/", response_class=HTMLResponse)
