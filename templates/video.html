@@ -113,10 +113,9 @@
 
             function keydown(key) {                  
                 if (key.keyCode == 32 || key.keyCode == 75) {
-
                     const v = document.getElementById("player");
 
-                    if (v.paused == true) {
+                    if (v.paused === true) {
                         v.play();
                     } else {
                         v.pause();
@@ -124,7 +123,7 @@
                 }
             }
         
-            document.addEventListner('keydown', keydown);
+            window.addEventListner('keydown', keydown);
         
             const hasLoopCookie = getCookie("loop")
             document.getElementById("loop").checked = hasLoopCookie;
