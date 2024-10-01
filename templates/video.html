@@ -106,7 +106,7 @@
                 document.getElementById("player").loop = hasLoopCookie;
             }
 
-            function getUrlQueries(name) {      
+            function getUrlQuery(name) {      
                 const url = new URL(window.location.href)
                 return url.searchParams.get(name)
             }
@@ -134,25 +134,26 @@
             // function autopage() { if (document.getElementById('autonext').checked) {      sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
         
             /* 一応残しておく
-            if (typeof getUrlQueries('t') === "undefined") {
-                // 名前空間を汚染してるし使われている箇所が見あたらない
+            if (typeof getUrlQuery('t') === "undefined") {
+                // 恐らく再生する時間だけどこの変数が使われている箇所が見あたらない　
                 t = 0;
             } else {
-                document.getElementById("player").currentTime = getUrlQueries('t');
+                document.getElementById("player").currentTime = getUrlQuery('t');
             }
             */
 
 
-            if (!getUrlQueries('t') instanceof undefined) {
-                document.getElementById("player").currentTime = getUrlQueries('t');
+            if (!getUrlQuery('t') instanceof undefined) {
+                document.getElementById("player").currentTime = getUrlQuery('t');
             }
             
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/comments?v=" + getUrlQueries('v'));
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "/comments?v=" + getUrlQuery('v'));
             xhr.onload = function () {      
                 if (xhr.status != 500) {
                     document.getElementById('comments').innerHTML = xhr.responseText;
-                }else { 
+                    console.log('comments_success');
+                } else { 
                     document.getElementById('comments').innerHTML = "エラーが発生しました。再読み込みを試してください"; 
                 }
             };
@@ -165,7 +166,7 @@
                 source: function (request, response) {      
                     {
                         const url = "/suggest?keyword=" + request.term;
-                        let xhr = new XMLHttpRequest();
+                        const xhr = new XMLHttpRequest();
                         xhr.open("GET", url);
                         xhr.onload = function () {      
                             response(JSON.parse(xhr.responseText));
