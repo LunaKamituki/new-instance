@@ -20,7 +20,8 @@ version = "1.0"
 
 os.system("chmod 777 ./yukiverify")
 
-apichannels = apicomments = []
+apichannels = []
+apicomments = []
 
 [[apichannels.append(i), apicomments.append(i)] for i in apis]
 
