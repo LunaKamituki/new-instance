@@ -38,44 +38,40 @@ def is_json(json_str):
     return result
 
 def apirequest(url, api_urls, globalListName):
-    global apis
-    global apichannels
-    global apicomments
+
+    def appenndAndRemoveAPI(listName, api):
+        global apis
+        global apichannels
+        global apicomments
+        
+        match listName:
+            case 'apis':  
+                apis.append(api)
+                apis.remove(api)
+            case 'apichannels':
+                apichannels.append(api)
+                apichannels.remove(api)
+            case 'apicomments':
+                apicomments.append(api)
+                apicomments.remove(api)
+        return
     
     starttime = time.time()
     
     for api in api_urls:
         if  time.time() - starttime >= max_time - 1:
             break
-        
+            
         try:
             res = requests.get(api + 'api/v1' + url, timeout=max_api_wait_time)
             if res.status_code == 200 and is_json(res.text):
                 return res.text
             else:
                 print(f"エラー:{api}")
-                match globalListName:
-                    case 'apis':  
-                        apis.append(api)
-                        apis.remove(api)
-                    case 'apichannels':
-                        apichannels.append(api)
-                        apichannels.remove(api)
-                    case 'apicomments':
-                        apicomments.append(api)
-                        apicomments.remove(api)
+                appendAndRemoveAPI(globalListName, api)
         except:
             print(f"タイムアウト:{api}")
-            match globalListName:
-                    case 'apis':  
-                        apis.append(api)
-                        apis.remove(api)
-                    case 'apichannels':
-                        apichannels.append(api)
-                        apichannels.remove(api)
-                    case 'apicomments':
-                        apicomments.append(api)
-                        apicomments.remove(api)
+            appendAndRemoveAPI(globalListName, api)
     
     raise APItimeoutError("APIがタイムアウトしました")
 
@@ -259,13 +255,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
         return redirect("/")
     t = requests.get(fr"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
-        
-        match urllib.parse.quote(message):
-            case '/genseeds':
-                return HTMLResponse(t.text + getSource('bbs_3'))
-                
-            case _:
-                return HTMLResponse(t.text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
+        return HTMLResponse(t.text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
