@@ -9,9 +9,9 @@ import subprocess
 from cache import cache
 import ast
 
-# 3 => (6.0, 6.5)
-max_api_wait_time = (6.0, 6.0)
-# 10 => 15
+# 3 => (3.0, 4.5)
+max_api_wait_time = (3.0, 4.5)
+# 10 => 25
 max_time = 25
 
 apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
@@ -20,8 +20,8 @@ version = "1.0"
 
 os.system("chmod 777 ./yukiverify")
 
-apichannels = []
-apicomments = []
+apichannels = apicomments = []
+
 [[apichannels.append(i), apicomments.append(i)] for i in apis]
 
 class APItimeoutError(Exception):
@@ -115,16 +115,10 @@ def get_comments(videoid):
     t = json.loads(apirequest(fr"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments, 'apicomments'))["comments"]
     return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
+'''
+使われていないし戻り値も設定されていないためコメントアウト
 def get_replies(videoid, key):
     t = json.loads(apirequest(fr"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments, 'apicomments'))["contentHtml"]
-
-'''
-def get_level(word):
-    for i1 in range(1, 13):
-        with open(f'Level{i1}.txt', 'r', encoding='UTF-8', newline='\n') as f:
-            if word in [i2.rstrip("\r\n") for i2 in f.readlines()]:
-                return i1
-    return 0
 '''
 
 def check_cokie(cookie):
