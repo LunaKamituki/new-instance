@@ -15,11 +15,6 @@ apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKami
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
 
-@cache(seconds=60)
-def getSource(name):
-    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text
-    
-
 os.system("chmod 777 ./yukiverify")
 
 apichannels = []
@@ -67,10 +62,10 @@ def apirequest(url, api_urls, globalListName):
             if res.status_code == 200 and is_json(res.text):
                 return res.text
             else:
-                print(f"エラー:{api}")
+                print(f"エラー: {api}")
                 appendAndRemoveAPI(globalListName, api)
         except:
-            print(f"タイムアウト:{api}")
+            print(f"タイムアウト: {api}")
             appendAndRemoveAPI(globalListName, api)
     
     raise APItimeoutError("APIがタイムアウトしました")
@@ -232,6 +227,11 @@ def comments(request: Request, v:str):
 @app.get("/thumbnail")
 def thumbnail(v:str):
     return Response(content = requests.get(fr"https://img.youtube.com/vi/{v}/0.jpg").content, media_type=r"image/jpeg")
+
+
+@cache(seconds=60)
+def getSource(name):
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text
 
 @app.get("/bbs", response_class=HTMLResponse)
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
