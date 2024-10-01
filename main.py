@@ -12,7 +12,7 @@ import ast
 # 3 => (6.0, 6.5)
 max_api_wait_time = (6.0, 6.0)
 # 10 => 15
-max_time = 15
+max_time = 25
 
 apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
