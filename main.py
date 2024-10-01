@@ -38,8 +38,12 @@ def is_json(json_str):
     return result
 
 def apirequest(url, api_urls, globalListName):
+    global apis
+    global apichannels
+    global apicomments
+    
     starttime = time.time()
-
+    
     for api in api_urls:
         if  time.time() - starttime >= max_time - 1:
             break
@@ -52,30 +56,24 @@ def apirequest(url, api_urls, globalListName):
                 print(f"エラー:{api}")
                 match globalListName:
                     case 'apis':  
-                        global apis
                         apis.append(api)
                         apis.remove(api)
                     case 'apichannels':
-                        global apichannels
                         apichannels.append(api)
                         apichannels.remove(api)
                     case 'apicomments':
-                        global apicomments
                         apicomments.append(api)
                         apicomments.remove(api)
         except:
             print(f"タイムアウト:{api}")
             match globalListName:
                     case 'apis':  
-                        global apis
                         apis.append(api)
                         apis.remove(api)
                     case 'apichannels':
-                        global apichannels
                         apichannels.append(api)
                         apichannels.remove(api)
                     case 'apicomments':
-                        global apicomments
                         apicomments.append(api)
                         apicomments.remove(api)
     
