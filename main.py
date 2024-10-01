@@ -20,24 +20,23 @@ os.system("chmod 777 ./yukiverify")
 apichannels = []
 apicomments = []
 [[apichannels.append(i), apicomments.append(i)] for i in apis]
+
 class APItimeoutError(Exception):
     pass
 
 def is_json(json_str):
-    result = False
     try:
         json.loads(json_str)
-        result = True
+        return True
     except json.JSONDecodeError as jde:
         pass
-    return result
+    return False
 
 def apirequest(url, api_urls, globalListName):
 
-    def appendAndRemoveAPI(listName, api):
-        global apis
-        global apichannels
-        global apicomments
+    def updateAPIList(listName, api):
+        # このglobal変数でclass作るのもあり
+        global apis, apichannels, apicomments
         
         match listName:
             case 'apis':  
@@ -63,36 +62,36 @@ def apirequest(url, api_urls, globalListName):
                 return res.text
             else:
                 print(f"エラー: {api}")
-                appendAndRemoveAPI(globalListName, api)
+                updateAPIList(globalListName, api)
         except:
             print(f"タイムアウト: {api}")
-            appendAndRemoveAPI(globalListName, api)
+            updateAPIList(globalListName, api)
     
     raise APItimeoutError("APIがタイムアウトしました")
 
 def get_info(request):
-    global version
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
 def get_data(videoid):
-    global logs
     t = json.loads(apirequest(fr"/videos/{urllib.parse.quote(videoid)}", apis, 'apis'))
     return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
-    global logs
     t = json.loads(apirequest(fr"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis, 'apis'))
 
     def load_search(i):
         if i["type"] == "video":
-            return {"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "length":str(datetime.timedelta(seconds=i["lengthSeconds"])), "published": i["publishedText"], "type":"video"}
+            return {"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "length":str(datetime.timedelta(seconds=i["lengthSeconds"])), "published": i["publishedText"], "type": "video"}
+            
         elif i["type"] == "playlist":
-            return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type":"playlist"}
+            return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type": "playlist"}
+            
+        elif i["authorThumbnails"][-1]["url"].startswith("https"):
+            return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type": "channel"}
+            
         else:
-            if i["authorThumbnails"][-1]["url"].startswith("https"):
-                return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type":"channel"}
-            else:
-                return {"author": i["author"], "id": i["authorId"], "thumbnail":fr"https://{i['authorThumbnails'][-1]['url']}", "type":"channel"}
+            return {"author": i["author"], "id": i["authorId"], "thumbnail": fr"https://{i['authorThumbnails'][-1]['url']}", "type": "channel"}
+    
     return [load_search(i) for i in t]
 
 def get_channel(channelid):
@@ -103,14 +102,14 @@ def get_channel(channelid):
         apichannels.append(apichannels[0])
         apichannels.remove(apichannels[0])
         raise APItimeoutError("APIがチャンネルを返しませんでした")
-    return [[{"title": i["title"], "id": i["videoId"], "authorId":t["authorId"], "author":t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
+    return [[{"title": i["title"], "id": i["videoId"], "authorId": t["authorId"], "author": t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
     t = json.loads(apirequest(fr"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis, 'apis'))["videos"]
-    return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type":"video"} for i in t]
+    return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type": "video"} for i in t]
 
 def get_comments(videoid):
-    t = json.loads(apirequest(fr"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments))["comments"]
+    t = json.loads(apirequest(fr"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments, 'apicomments'))["comments"]
     return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 def get_replies(videoid, key):
@@ -126,7 +125,7 @@ def get_level(word):
 '''
 
 def check_cokie(cookie):
-    print(cookie)
+    print('check_cookie: ' + cookie)
     if cookie == "True":
         return True
     return False
@@ -137,7 +136,7 @@ def get_verifycode():
         hashed_password = result.stdout.strip()
         return hashed_password
     except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
+        print(f"get_verifycode__Error: {e}")
         return None
 
 
@@ -199,30 +198,31 @@ def channel(channelid:str, response: Response, request: Request, yuki: Union[str
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     t = get_channel(channelid)
-    return template("channel.html", {"request": request, "results":t[0], "channelname":t[1]["channelname"], "channelicon":t[1]["channelicon"], "channelprofile":t[1]["channelprofile"], "proxy":proxy})
+    return template("channel.html", {"request": request, "results": t[0], "channelname": t[1]["channelname"], "channelicon": t[1]["channelicon"], "channelprofile": t[1]["channelprofile"], "proxy": proxy})
 
 @app.get("/playlist", response_class=HTMLResponse)
 def playlist(list:str, response: Response, request: Request, page:Union[int, None]=1, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    return template("search.html", {"request": request, "results":get_playlist(list, str(page)), "word":"", "next":f"/playlist?list={list}", "proxy":proxy})
+    return template("search.html", {"request": request, "results": get_playlist(list, str(page)), "word": "", "next": f"/playlist?list={list}", "proxy": proxy})
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
-    global apis, apichannels, apicomments
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    return template("info.html", {"request": request, "Youtube_API":apis[0], "Channel_API":apichannels[0], "Comments_API":apicomments[0]})
+    
+    global apis, apichannels, apicomments
+    return template("info.html", {"request": request, "Youtube_API": apis[0], "Channel_API": apichannels[0], "Comments_API": apicomments[0]})
 
 @app.get("/suggest")
 def suggest(keyword:str):
-    return [i[0] for i in json.loads(requests.get(r"http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q="+urllib.parse.quote(keyword)).text[19:-1])[1]]
+    return [i[0] for i in json.loads(requests.get(r"http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword)).text[19:-1])[1]]
 
 @app.get("/comments")
 def comments(request: Request, v:str):
-    return template("comments.html", {"request": request, "comments":get_comments(v)})
+    return template("comments.html", {"request": request, "comments": get_comments(v)})
 
 @app.get("/thumbnail")
 def thumbnail(v:str):
@@ -246,7 +246,7 @@ def bbsapi_cached(verify, channel):
 
 @app.get("/bbs/api", response_class=HTMLResponse)
 def view_bbs(request: Request, t: str, channel:Union[str, None]="main", verify: Union[str, None] = "false"):
-    print(fr"{url}bbs/api?t={urllib.parse.quote(t)}&verify={urllib.parse.quote(verify)}&channel={urllib.parse.quote(channel)}")
+    # print(fr"{url}bbs/api?t={urllib.parse.quote(t)}&verify={urllib.parse.quote(verify)}&channel={urllib.parse.quote(channel)}")
     return bbsapi_cached(verify, channel)
 
 @app.get("/bbs/result")
