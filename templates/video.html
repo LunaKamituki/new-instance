@@ -142,7 +142,7 @@
             */
 
 
-            if (!getUrlQuery('t') instanceof undefined) {
+            if (!getUrlQuery('t') === undefined) {
                 document.getElementById("player").currentTime = getUrlQuery('t');
             }
             
