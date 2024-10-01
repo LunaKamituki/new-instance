@@ -39,7 +39,7 @@ def is_json(json_str):
 
 def apirequest(url, api_urls, globalListName):
 
-    def appenndAndRemoveAPI(listName, api):
+    def appendAndRemoveAPI(listName, api):
         global apis
         global apichannels
         global apicomments
