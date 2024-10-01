@@ -36,13 +36,11 @@ def is_json(json_str):
         pass
     return result
 
-def apirequest(url):
-    global apis
-    global max_time
+def apirequest(url, apis):
     starttime = time.time()
 
     for api in apis:
-        if  time.time() - starttime >= max_time -1:
+        if  time.time() - starttime >= max_time - 1:
             break
         
         try:
@@ -60,64 +58,18 @@ def apirequest(url):
     
     raise APItimeoutError("APIがタイムアウトしました")
 
-def apichannelrequest(url):
-    global apichannels
-    global max_time
-    starttime = time.time()
-
-    for api in apichannels:
-        if  time.time() - starttime >= max_time -1:
-            break
-
-        try:
-            res = requests.get(api+url, timeout=max_api_wait_time)
-            if res.status_code == 200 and is_json(res.text):
-                return res.text
-            else:
-                print(f"エラー:{api}")
-                apichannels.append(api)
-                apichannels.remove(api)
-        except:
-            print(f"タイムアウト:{api}")
-            apichannels.append(api)
-            apichannels.remove(api)
-    
-    raise APItimeoutError("APIがタイムアウトしました")
-
-def apicommentsrequest(url):
-    global apicomments
-    global max_time
-    starttime = time.time()
-    for api in apicomments:
-        if  time.time() - starttime >= max_time -1:
-            break
-        try:
-            res = requests.get(api+url, timeout=max_api_wait_time)
-            if res.status_code == 200 and is_json(res.text):
-                return res.text
-            else:
-                print(f"エラー:{api}")
-                apicomments.append(api)
-                apicomments.remove(api)
-        except:
-            print(f"タイムアウト:{api}")
-            apicomments.append(api)
-            apicomments.remove(api)
-    raise APItimeoutError("APIがタイムアウトしました")
-
-
 def get_info(request):
     global version
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
 def get_data(videoid):
     global logs
-    t = json.loads(apirequest(r"api/v1/videos/" + urllib.parse.quote(videoid)))
+    t = json.loads(apirequest(r"api/v1/videos/" + urllib.parse.quote(videoid), apis))
     return [{"id":i["videoId"], "title":i["title"], "authorId":i["authorId"], "author":i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
     global logs
-    t = json.loads(apirequest(fr"api/v1/search?q={urllib.parse.quote(q)}&page={page}&hl=jp"))
+    t = json.loads(apirequest(fr"api/v1/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis))
 
     def load_search(i):
         if i["type"] == "video":
@@ -133,7 +85,7 @@ def get_search(q, page):
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apichannelrequest(r"api/v1/channels/" + urllib.parse.quote(channelid)))
+    t = json.loads(apirequest(r"api/v1/channels/" + urllib.parse.quote(channelid), apichannels))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
         apichannels.append(apichannels[0])
@@ -142,15 +94,15 @@ def get_channel(channelid):
     return [[{"title":i["title"], "id":i["videoId"], "authorId":t["authorId"], "author":t["author"], "published":i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname":t["author"], "channelicon":t["authorThumbnails"][-1]["url"], "channelprofile":t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
-    t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
+    t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page), apis))["videos"]
     return [{"title":i["title"], "id":i["videoId"], "authorId":i["authorId"], "author":i["author"], "type":"video"} for i in t]
 
 def get_comments(videoid):
-    t = json.loads(apicommentsrequest(r"api/v1/comments/"+ urllib.parse.quote(videoid)+"?hl=jp"))["comments"]
+    t = json.loads(apirequest(r"api/v1/comments/"+ urllib.parse.quote(videoid)+"?hl=jp", apicomments))["comments"]
     return [{"author":i["author"], "authoricon":i["authorThumbnails"][-1]["url"], "authorid":i["authorId"], "body":i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 def get_replies(videoid, key):
-    t = json.loads(apicommentsrequest(fr"api/v1/comments/{videoid}?hmac_key={key}&hl=jp&format=html"))["contentHtml"]
+    t = json.loads(apirequest(fr"api/v1/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments))["contentHtml"]
 
 def get_level(word):
     for i1 in range(1, 13):
