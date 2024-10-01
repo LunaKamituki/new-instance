@@ -88,7 +88,7 @@
         
             function getCookie(name) {     
                 const pattern = new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")
-                const matches = document.cookie.match(patern); 
+                const matches = document.cookie.match(pattern); 
                 return matches ? decodeURIComponent(matches[1]) : undefined;
             }
         
