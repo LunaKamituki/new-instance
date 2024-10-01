@@ -9,10 +9,10 @@ import subprocess
 from cache import cache
 import ast
 
-# 3 => (3.0, 1.5)
-max_api_wait_time = (3.0, 1.5)
-# 10 => 5
-max_time = 5
+# 3 => (3.0, 2.5)
+max_api_wait_time = (3.0, 2.5)
+# 10 => 7.5
+max_time = 7.5
 
 apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
