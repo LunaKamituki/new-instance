@@ -36,22 +36,24 @@ def is_json(json_str):
         pass
     return False
 
-def apirequest(url, api_urls, globalListName):
+def updateList(list, str):
+    list.append(str)
+    list.remove(str)
+    return list
 
+def apirequest(url, api_urls, globalListName):
+    
     def updateAPIList(listName, api):
         # このglobal変数でclass作るのもあり
         global apis, apichannels, apicomments
         
         match listName:
             case 'apis':  
-                apis.append(api)
-                apis.remove(api)
+                apis = updateList(apis, api)
             case 'apichannels':
-                apichannels.append(api)
-                apichannels.remove(api)
+                apichannels = updateList(apichannels, api)
             case 'apicomments':
-                apicomments.append(api)
-                apicomments.remove(api)
+                apicomments = updateList(apicomments, api)
         return
     
     starttime = time.time()
@@ -103,8 +105,7 @@ def get_channel(channelid):
     t = json.loads(apirequest(fr"/channels/{urllib.parse.quote(channelid)}", apichannels, 'apichannels'))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
-        apichannels.append(apichannels[0])
-        apichannels.remove(apichannels[0])
+        apichannels = updateList(apichannels, apichannels[0])
         raise APItimeoutError("APIがチャンネルを返しませんでした")
     return [[{"title": i["title"], "id": i["videoId"], "authorId": t["authorId"], "author": t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
 
