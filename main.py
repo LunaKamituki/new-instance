@@ -103,7 +103,7 @@ def get_search(q, page):
             if i["authorThumbnails"][-1]["url"].startswith("https"):
                 return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type":"channel"}
             else:
-                return {"author": i["author"], "id": i["authorId"], "thumbnail":fr"https://{i["authorThumbnails"][-1]['url']}", "type":"channel"}
+                return {"author": i["author"], "id": i["authorId"], "thumbnail":fr"https://{i['authorThumbnails'][-1]['url']}", "type":"channel"}
     return [load_search(i) for i in t]
 
 def get_channel(channelid):
