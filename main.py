@@ -9,8 +9,11 @@ import subprocess
 from cache import cache
 import ast
 
-max_api_wait_time = (3.0, 3.5)
-max_time = 10
+# 3 => (3.0, 1.5)
+max_api_wait_time = (3.0, 1.5)
+# 10 => 5
+max_time = 5
+
 apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
@@ -125,7 +128,7 @@ def get_level(word):
 '''
 
 def check_cokie(cookie):
-    print('check_cookie: ' + cookie)
+    print(cookie)
     if cookie == "True":
         return True
     return False
