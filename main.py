@@ -37,10 +37,10 @@ def is_json(json_str):
         pass
     return result
 
-def apirequest(url, apis, globalListName):
+def apirequest(url, api_urls, globalListName):
     starttime = time.time()
 
-    for api in apis:
+    for api in api_urls:
         if  time.time() - starttime >= max_time - 1:
             break
         
