@@ -15,7 +15,7 @@ max_api_wait_time = (3.0, 4.5)
 max_time = 25
 
 apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
-url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
+url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
 
 os.system("chmod 777 ./yukiverify")
@@ -79,11 +79,11 @@ def get_info(request):
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
 def get_data(videoid):
-    t = json.loads(apirequest(fr"/videos/{urllib.parse.quote(videoid)}", apis, 'apis'))
+    t = json.loads(apirequest(f"/videos/{urllib.parse.quote(videoid)}", apis, 'apis'))
     return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
-    t = json.loads(apirequest(fr"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis, 'apis'))
+    t = json.loads(apirequest(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis, 'apis'))
 
     def load_search(i):
         if i["type"] == "video":
@@ -96,13 +96,13 @@ def get_search(q, page):
             return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type": "channel"}
             
         else:
-            return {"author": i["author"], "id": i["authorId"], "thumbnail": fr"https://{i['authorThumbnails'][-1]['url']}", "type": "channel"}
+            return {"author": i["author"], "id": i["authorId"], "thumbnail": f"https://{i['authorThumbnails'][-1]['url']}", "type": "channel"}
     
     return [load_search(i) for i in t]
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apirequest(fr"/channels/{urllib.parse.quote(channelid)}", apichannels, 'apichannels'))
+    t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", apichannels, 'apichannels'))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
         apichannels = updateList(apichannels, apichannels[0])
@@ -110,17 +110,17 @@ def get_channel(channelid):
     return [[{"title": i["title"], "id": i["videoId"], "authorId": t["authorId"], "author": t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
-    t = json.loads(apirequest(fr"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis, 'apis'))["videos"]
+    t = json.loads(apirequest(f"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis, 'apis'))["videos"]
     return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type": "video"} for i in t]
 
 def get_comments(videoid):
-    t = json.loads(apirequest(fr"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments, 'apicomments'))["comments"]
+    t = json.loads(apirequest(f"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments, 'apicomments'))["comments"]
     return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 '''
 使われていないし戻り値も設定されていないためコメントアウト
 def get_replies(videoid, key):
-    t = json.loads(apirequest(fr"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments, 'apicomments'))["contentHtml"]
+    t = json.loads(apirequest(f"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments, 'apicomments'))["contentHtml"]
 '''
 
 def check_cokie(cookie):
@@ -217,7 +217,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 
 @app.get("/suggest")
 def suggest(keyword:str):
-    return [i[0] for i in json.loads(requests.get(r"http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword)).text[19:-1])[1]]
+    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword)).text[19:-1])[1]]
 
 @app.get("/comments")
 def comments(request: Request, v:str):
@@ -225,7 +225,7 @@ def comments(request: Request, v:str):
 
 @app.get("/thumbnail")
 def thumbnail(v:str):
-    return Response(content = requests.get(fr"https://img.youtube.com/vi/{v}/0.jpg").content, media_type=r"image/jpeg")
+    return Response(content = requests.get(f"https://img.youtube.com/vi/{v}/0.jpg").content, media_type=r"image/jpeg")
 
 
 @cache(seconds=60)
@@ -236,23 +236,23 @@ def getSource(name):
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
+    res = HTMLResponse(requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
     return res
 
 @cache(seconds=5)
 def bbsapi_cached(verify, channel):
-    return requests.get(fr"{url}bbs/api?t={urllib.parse.quote(str(int(time.time()*1000)))}&verify={urllib.parse.quote(verify)}&channel={urllib.parse.quote(channel)}", cookies={"yuki":"True"}).text
+    return requests.get(f"{url}bbs/api?t={urllib.parse.quote(str(int(time.time()*1000)))}&verify={urllib.parse.quote(verify)}&channel={urllib.parse.quote(channel)}", cookies={"yuki":"True"}).text
 
 @app.get("/bbs/api", response_class=HTMLResponse)
 def view_bbs(request: Request, t: str, channel:Union[str, None]="main", verify: Union[str, None] = "false"):
-    # print(fr"{url}bbs/api?t={urllib.parse.quote(t)}&verify={urllib.parse.quote(verify)}&channel={urllib.parse.quote(channel)}")
+    # print(f"{url}bbs/api?t={urllib.parse.quote(t)}&verify={urllib.parse.quote(verify)}&channel={urllib.parse.quote(channel)}")
     return bbsapi_cached(verify, channel)
 
 @app.get("/bbs/result")
 def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[str, None] = "", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    t = requests.get(fr"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
+    t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(t.text + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2'))
         
@@ -260,7 +260,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
 
 @cache(seconds=60)
 def how_cached():
-    return requests.get(fr"{url}bbs/how").text
+    return requests.get(f"{url}bbs/how").text
 
 @app.get("/bbs/how", response_class=PlainTextResponse)
 def view_commonds(request: Request, yuki: Union[str] = Cookie(None)):
@@ -271,7 +271,7 @@ def view_commonds(request: Request, yuki: Union[str] = Cookie(None)):
 @app.get("/load_instance")
 def home():
     global url
-    url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
+    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
 
 @app.exception_handler(500)
