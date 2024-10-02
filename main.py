@@ -41,7 +41,7 @@ def updateList(list, str):
     list.remove(str)
     return list
 
-def apirequest(url, api_urls, globalListName):
+def apirequest(api_urlpath, api_urls, globalListName):
     
     def updateAPIList(listName, api):
         # このglobal変数でclass作るのもあり
@@ -63,7 +63,7 @@ def apirequest(url, api_urls, globalListName):
             break
             
         try:
-            res = requests.get(api + 'api/v1' + url, timeout=max_api_wait_time)
+            res = requests.get(api + 'api/v1' + api_urlpath, timeout=max_api_wait_time)
             if res.status_code == 200 and is_json(res.text):
                 return res.text
             else:
