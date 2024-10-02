@@ -9,8 +9,8 @@ import subprocess
 from cache import cache
 import ast
 
-# 3 => (3.0, 4.5)
-max_api_wait_time = (3.0, 4.5)
+# 3 => (3.0, 5.5)
+max_api_wait_time = (3.0, 5.5)
 # 10 => 25
 max_time = 25
 
