@@ -165,6 +165,7 @@ def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
     print(check_cokie(yuki))
     return redirect("/word")
 
+
 @app.get('/watch', response_class=HTMLResponse)
 def video(v:str, response: Response, request: Request, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
@@ -188,7 +189,6 @@ def search(tag:str, response: Response, request: Request, page:Union[int, None]=
         return redirect("/")
     return redirect(f"/search?q={tag}")
 
-
 @app.get("/channel/{channelid}", response_class=HTMLResponse)
 def channel(channelid:str, response: Response, request: Request, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
@@ -204,18 +204,6 @@ def playlist(list:str, response: Response, request: Request, page:Union[int, Non
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     return template("search.html", {"request": request, "results": get_playlist(list, str(page)), "word": "", "next": f"/playlist?list={list}", "proxy": proxy})
 
-@app.get("/info", response_class=HTMLResponse)
-def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
-    if not(check_cokie(yuki)):
-        return redirect("/")
-    response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    
-    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api[0], "Channel_API": invidious_api.channels_api[0], "Comments_API": invidious_api.comments_api[0]})
-
-@app.get("/suggest")
-def suggest(keyword:str):
-    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword)).text[19:-1])[1]]
-
 @app.get("/comments")
 def comments(request: Request, v:str):
     return template("comments.html", {"request": request, "comments": get_comments(v)})
@@ -223,6 +211,10 @@ def comments(request: Request, v:str):
 @app.get("/thumbnail")
 def thumbnail(v:str):
     return Response(content = requests.get(f"https://img.youtube.com/vi/{v}/0.jpg").content, media_type=r"image/jpeg")
+
+@app.get("/suggest")
+def suggest(keyword:str):
+    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword)).text[19:-1])[1]]
 
 
 @cache(seconds=60)
@@ -264,6 +256,14 @@ def view_commonds(request: Request, yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     return how_cached()
+
+@app.get("/info", response_class=HTMLResponse)
+def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
+    if not(check_cokie(yuki)):
+        return redirect("/")
+    response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
+    
+    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api[0], "Channel_API": invidious_api.channels_api[0], "Comments_API": invidious_api.comments_api[0]})
 
 @app.get("/load_instance")
 def home():
