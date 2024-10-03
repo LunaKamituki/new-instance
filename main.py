@@ -210,7 +210,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     
-    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api, "Channel_API": invidious_api.channels_api, "Comments_API": invidious_api.comments_api})
+    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api[0], "Channel_API": invidious_api.channels_api[0], "Comments_API": invidious_api.comments_api[0]})
 
 @app.get("/suggest")
 def suggest(keyword:str):
