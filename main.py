@@ -66,10 +66,10 @@ def apirequest(api_urlpath, api_urls):
                 return res.text
             else:
                 print(f"エラー: {api}")
-                updateList(api_urs, api)
+                updateList(api_urls, api)
         except:
             print(f"タイムアウト: {api}")
-            updateList(api_urs, api)
+            updateList(api_urls, api)
     
     raise APItimeoutError("APIがタイムアウトしました")
 
