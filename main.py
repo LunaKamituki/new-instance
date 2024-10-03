@@ -22,13 +22,14 @@ class InvidiousAPI:
         self.comments_api = []
         
         [[self.channels_api.append(api), self.comments_api.append(api)] for api in self.videos_api]
-        
+
     def __repr__(self):
         return {
             'videos_api': self.videos_api,
             'channels_api': self.channels_api,
             'comments_api': self.comments_api
         }
+
         
 invidious_api = InvidiousAPI()
 
@@ -99,7 +100,6 @@ def get_search(q, page):
     return [load_search(i) for i in t]
 
 def get_channel(channelid):
-    global apichannels
     t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", invidious_api.channels_api))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
@@ -210,8 +210,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     
-    global apis, apichannels, apicomments
-    return template("info.html", {"request": request, "Youtube_API": apis[0], "Channel_API": apichannels[0], "Comments_API": apicomments[0]})
+    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api, "Channel_API": invidious_api.channels_api, "Comments_API": invidious_api.comments_api})
 
 @app.get("/suggest")
 def suggest(keyword:str):
