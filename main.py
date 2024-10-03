@@ -30,7 +30,7 @@ class InvidiousAPI:
             'comments_api': self.comments_api
         }
         
-invidious_api = new InvidiousAPI()
+invidious_api = InvidiousAPI()
 
 url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
