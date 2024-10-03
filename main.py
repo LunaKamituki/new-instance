@@ -14,16 +14,28 @@ max_api_wait_time = (3.0, 5.5)
 # 10 => 25
 max_time = 25
 
-apis = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
+class InvidiousAPI:
+    def __init__(self):
+        self.videos_api = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
+        
+        self.channels_api = []
+        self.comments_api = []
+        
+        [[self.channels_api.append(api), self.comments_api.append(api)] for api in self.videos_api]
+        
+    def __repr__(self):
+        return {
+            'videos_api': self.videos_api,
+            'channels_api': self.channels_api,
+            'comments_api': self.comments_api
+        }
+        
+invidious_api = new InvidiousAPI()
+
 url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
 
 os.system("chmod 777 ./yukiverify")
-
-apichannels = []
-apicomments = []
-
-[[apichannels.append(i), apicomments.append(i)] for i in apis]
 
 class APItimeoutError(Exception):
     pass
@@ -41,21 +53,7 @@ def updateList(list, str):
     list.remove(str)
     return list
 
-def apirequest(api_urlpath, api_urls, globalListName):
-    
-    def updateAPIList(listName, api):
-        # このglobal変数でclass作るのもあり
-        global apis, apichannels, apicomments
-        
-        match listName:
-            case 'apis':  
-                apis = updateList(apis, api)
-            case 'apichannels':
-                apichannels = updateList(apichannels, api)
-            case 'apicomments':
-                apicomments = updateList(apicomments, api)
-        return
-    
+def apirequest(api_urlpath, api_urls):
     starttime = time.time()
     
     for api in api_urls:
@@ -68,10 +66,10 @@ def apirequest(api_urlpath, api_urls, globalListName):
                 return res.text
             else:
                 print(f"エラー: {api}")
-                updateAPIList(globalListName, api)
+                updateList(api_urs, api)
         except:
             print(f"タイムアウト: {api}")
-            updateAPIList(globalListName, api)
+            updateList(api_urs, api)
     
     raise APItimeoutError("APIがタイムアウトしました")
 
@@ -79,11 +77,11 @@ def get_info(request):
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
 def get_data(videoid):
-    t = json.loads(apirequest(f"/videos/{urllib.parse.quote(videoid)}", apis, 'apis'))
+    t = json.loads(apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos_api))
     return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
-    t = json.loads(apirequest(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", apis, 'apis'))
+    t = json.loads(apirequest(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", invidious_api.videos_api))
 
     def load_search(i):
         if i["type"] == "video":
@@ -102,7 +100,7 @@ def get_search(q, page):
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", apichannels, 'apichannels'))
+    t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", invidious_api.channels_api))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
         apichannels = updateList(apichannels, apichannels[0])
@@ -110,17 +108,17 @@ def get_channel(channelid):
     return [[{"title": i["title"], "id": i["videoId"], "authorId": t["authorId"], "author": t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
-    t = json.loads(apirequest(f"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", apis, 'apis'))["videos"]
+    t = json.loads(apirequest(f"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", invidious_api.videos_api))["videos"]
     return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type": "video"} for i in t]
 
 def get_comments(videoid):
-    t = json.loads(apirequest(f"/comments/{urllib.parse.quote(videoid)}?hl=jp", apicomments, 'apicomments'))["comments"]
+    t = json.loads(apirequest(f"/comments/{urllib.parse.quote(videoid)}?hl=jp", invidious_api.comments_api))["comments"]
     return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 '''
 使われていないし戻り値も設定されていないためコメントアウト
 def get_replies(videoid, key):
-    t = json.loads(apirequest(f"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", apicomments, 'apicomments'))["contentHtml"]
+    t = json.loads(apirequest(f"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", invidious_api.comments_api))["contentHtml"]
 '''
 
 def check_cokie(cookie):
