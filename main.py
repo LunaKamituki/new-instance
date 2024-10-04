@@ -9,10 +9,10 @@ import subprocess
 from cache import cache
 import ast
 
-# 3 => (3.0, 5.5)
-max_api_wait_time = (3.0, 5.5)
-# 10 => 25
-max_time = 25
+# 3 => (3.0, 2.0)
+max_api_wait_time = (3.0, 2.0)
+# 10 => 10
+max_time = 10
 
 class InvidiousAPI:
     def __init__(self):
@@ -34,6 +34,7 @@ class InvidiousAPI:
 invidious_api = InvidiousAPI()
 
 url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
+
 version = "1.0"
 
 os.system("chmod 777 ./yukiverify")
