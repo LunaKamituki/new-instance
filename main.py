@@ -269,9 +269,9 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 
 @app.get("/load_instance")
 def home():
-    global url
+    global url, invidious_api
     url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
-
+    invidious_api = InvidiousAPI()
 
 @app.exception_handler(500)
 def page(request: Request, __):
