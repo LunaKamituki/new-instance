@@ -227,7 +227,7 @@ def getSource(name):
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    res = HTMLResponse(no_robot_meta_tag + requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text.replace('return str.replace(regexp_url, regexp_makeLink);', 'return urlConversion(str).replace(regexp_url, regexp_makeLink);') + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2') + getSource('bbs_5'))
+    res = HTMLResponse(no_robot_meta_tag + requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text.replace('return str.replace(regexp_url, regexp_makeLink);', 'return convertToUrl(str).replace(regexp_url, regexp_makeLink);') + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2') + getSource('bbs_5'))
     return res
 
 @cache(seconds=5)
@@ -245,7 +245,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
         return redirect("/")
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
-        return HTMLResponse(no_robot_meta_tag + t.text.replace('return str.replace(regexp_url, regexp_makeLink);', 'return urlConversion(str).replace(regexp_url, regexp_makeLink);') + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2') + getSource('bbs_5'))
+        return HTMLResponse(no_robot_meta_tag + t.text.replace('return str.replace(regexp_url, regexp_makeLink);', 'return convertToUrl(str).replace(regexp_url, regexp_makeLink);') + getSource('bbs_1') + getSource('shortcut_help') + getSource('bbs_2') + getSource('bbs_5'))
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
