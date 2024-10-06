@@ -167,9 +167,13 @@
             player.style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
 
             let info = document.getElementById('video_info');
-            if(player.networkState === 3 || player.readyState === 0){
-                info.textContent = '動画の読み込みに失敗しました。';
-            }
+
+            setTimeout(() => {
+                if(player.networkState === 3 || player.readyState === 0){
+                    info.textContent = '動画の読み込みに失敗しました。';
+                }
+            }, 1000);
+            
         </script>
         <script>
             $('#searchbox').autocomplete({
