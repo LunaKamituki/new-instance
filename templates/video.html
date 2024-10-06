@@ -36,6 +36,7 @@
                         {% for videourl in videourls%}
                         <source src="{{ videourl }}">
                         {% endfor %}
+                        <p id="video_info">お使いのブラウザは動画の再生に対応していません。</p>
                     </video>
                 </div>
                 <div class="h-box">
@@ -161,8 +162,14 @@
                 }
             };
             xhr.send();
-        
-            document.getElementById("player").style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
+
+            let player = document.getElementById("player");
+            player.style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
+
+            let info = document.getElementById('video_info');
+            if(player.networkState === 3 || player.readyState === 0){
+                info.textContent = '動画の読み込みに失敗しました。';
+            }
         </script>
         <script>
             $('#searchbox').autocomplete({
