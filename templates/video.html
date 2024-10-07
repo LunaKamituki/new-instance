@@ -170,6 +170,7 @@
 
             setTimeout(() => {
                 if(player.networkState === 3 || player.readyState === 0){
+                    console.log(`video_state\nnetwork: ${player.networkState}\nready: ${player.readyState}}`);
                     info.textContent = '動画の読み込みに失敗しました。';
                 }
             }, 1000);
