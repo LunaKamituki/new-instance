@@ -158,7 +158,7 @@
                     document.getElementById('comments').innerHTML = xhr.responseText;
                     console.log('comments_success');
                 } else { 
-                    document.getElementById('comments').innerHTML = "エラーが発生しました。再読み込みを試してください"; 
+                    document.getElementById('comments').innerHTML = "コメントの読み込みに失敗しました。再読み込みをお試し下さい。"; 
                 }
             };
             xhr.send();
@@ -169,9 +169,9 @@
             let info = document.getElementById('video_info');
 
             setTimeout(() => {
-                if(player.networkState === 3 || player.readyState === 0){
-                    console.log(`video_state\nnetwork: ${player.networkState}\nready: ${player.readyState}}`);
-                    info.textContent = '動画の読み込みに失敗しました。';
+                if(player.networkState === 3){
+                    info.textContent = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。';
+                    player.getElementsByTagName('source')[0].remove();
                 }
             }, 1000);
             
