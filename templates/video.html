@@ -170,9 +170,14 @@
 
             let info = document.getElementById('video_info');
 
+            let reload_button_elm = document.createElement('button');
+            reload_button_elm.onclick = 'location.replace(loction.href);';
+            reload_button_elm.innerHTML = 'リロード';
+            
             setTimeout(() => {
                 if(player.networkState === 3){
                     info.textContent = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。';
+                    player.after(reload_button_elm)
                     player.after(info)
                     player.remove()
                 }
