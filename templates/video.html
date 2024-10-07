@@ -174,7 +174,6 @@
                 if(player.networkState === 3){
                     info.textContent = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。';
                     player.after(info)
-                    info.remove()
                     player.remove()
                 }
             }, 1000);
