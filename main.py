@@ -64,7 +64,13 @@ def apirequest(api_urlpath, api_urls):
             
         try:
             res = requests.get(api + 'api/v1' + api_urlpath, timeout=max_api_wait_time)
-            if res.status_code == 200 and is_json(res.text):
+            if res.status_code == requests.codes.ok and is_json(res.text):
+                if api_urlpath.startswith('/videos/'):
+                    video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], timeout=(3.0, 0.5))
+                    if not video_res.headers['Content-Type'] == 'video/mp4':
+                        print(f"動画取得エラー: {api}")
+                        updateList(api_urls, api)
+                        continue
                 return res.text
             else:
                 print(f"エラー: {api}")
@@ -72,6 +78,7 @@ def apirequest(api_urlpath, api_urls):
         except:
             print(f"タイムアウト: {api}")
             updateList(api_urls, api)
+
     
     raise APItimeoutError("APIがタイムアウトしました")
 
