@@ -71,7 +71,7 @@ def apirequest(api_urlpath, api_urls):
                         print(f"Error(video): {api}")
                         updateList(api_urls, api)
                         continue
-                print(f"Success: {api}({api_urlpath.split('/')[1]})")
+                print(f"Success({api_urlpath.split('/')[1]}): {api}")
                 return res.text
             else:
                 print(f"Error: {api}")
