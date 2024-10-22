@@ -71,7 +71,6 @@ def apirequest(api_urlpath, api_urls):
                         print(f"Error(video): {api}")
                         updateList(api_urls, api)
                         continue
-                if spi_urlpath.startwith('/videos/'
                 print(f"Success({api_urlpath.split('/')[1].split('?')[0]}): {api}")
                 return res.text
             else:
