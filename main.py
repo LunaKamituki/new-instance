@@ -23,11 +23,14 @@ class InvidiousAPI:
         
         [[self.channels_api.append(api), self.comments_api.append(api)] for api in self.videos_api]
 
-    def __repr__(self):
+        self.checkVideo = True
+
+    def info():
         return {
             'videos_api': self.videos_api,
             'channels_api': self.channels_api,
-            'comments_api': self.comments_api
+            'comments_api': self.comments_api,
+            'checkVideo': self.checkVideo
         }
 
         
@@ -65,13 +68,13 @@ def apirequest(api_urlpath, api_urls):
         try:
             res = requests.get(api + 'api/v1' + api_urlpath, timeout=max_api_wait_time)
             if res.status_code == requests.codes.ok and is_json(res.text):
-                if api_urlpath.startswith('/videos/'):
+                if invidious_api.checkVideo and api_urlpath.startswith('/videos/'):
                     video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], timeout=(3.0, 0.5))
                     if not video_res.headers['Content-Type'] == 'video/mp4':
                         print(f"Invidious Failed(video): {api}")
                         updateList(api_urls, api)
                         continue
-                print(f"Invidious Success({api_urlpath.split('/')[1].split('?')[0]}): {api}")
+                print(f"Invidious Success({api_urlpath.split('/')[1].split('?')[0]})({invidious_api.checkVideo}): {api}")
                 return res.text
             else:
                 print(f"Invidious Failed: {api}")
@@ -275,11 +278,29 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
     
     return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api[0], "Channel_API": invidious_api.channels_api[0], "Comments_API": invidious_api.comments_api[0]})
 
-@app.get("/load_instance")
+@app.get("/reset", response_class=PlainTextResponse)
 def home():
     global url, invidious_api
     url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
     invidious_api = InvidiousAPI()
+    return 'Success'
+
+@app.get("/api", response_class=PlainTextResponse)
+def displayAPI():
+    return str(invidious_api.info())
+    
+@app.get("/api/update", response_class=PlainTextResponse)
+def updateAPI():
+    global invidious_api
+    invidious_api = InvidiosAPI()
+    return 'Success'
+    
+@app.get("/api/video/check/toggle", response_class=PlainTextResponse)
+def toggleVideoCheck():
+    global invidious_api
+    invidious_api.checkVideo = not invidious_api.checkVideo
+    return f'{not invidious_api.checkVideo} to {invidious_api.checkVideo}'
+
 
 @app.exception_handler(500)
 def page(request: Request, __):
