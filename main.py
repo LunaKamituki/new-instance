@@ -315,7 +315,7 @@ def displayVideos():
 
 @app.get("/api/videos/check", response_class=PlainTextResponse)
 def displayCheckVideo():
-    return invidious_api.checkVideo
+    return str(invidious_api.checkVideo)
 
 @app.get("/api/videos/check/toggle", response_class=PlainTextResponse)
 def toggleVideoCheck():
