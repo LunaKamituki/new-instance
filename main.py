@@ -39,6 +39,7 @@ invidious_api = InvidiousAPI()
 url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
 version = "1.0"
+new_instance_version = "beta 1.3.2"
 
 os.system("chmod 777 ./yukiverify")
 
@@ -285,17 +286,38 @@ def home():
     invidious_api = InvidiousAPI()
     return 'Success'
 
+@app.get("/version", response_class=PlainTextResponse)
+def displayVersion():
+    return {'version': version, 'new_instance_version': new_instance_version}
+
 @app.get("/api", response_class=PlainTextResponse)
 def displayAPI():
-    return str(invidious_api.info())
+    return invidious_api.info()
     
 @app.get("/api/update", response_class=PlainTextResponse)
 def updateAPI():
     global invidious_api
     invidious_api = InvidiosAPI()
     return 'Success'
-    
-@app.get("/api/video/check/toggle", response_class=PlainTextResponse)
+
+@app.get("/api/channels", response_class=PlainTextResponse)
+def displayChannels():
+    return invidious_api.channels_api
+
+@app.get("/api/comments", response_class=PlainTextResponse)
+def displayComments():
+    return invidious_api.comments_api
+
+
+@app.get("/api/videos", response_class=PlainTextResponse)
+def displayVideos():
+    return invidious_api.videos_api
+
+@app.get("/api/videos/check", response_class=PlainTextResponse)
+def displayCheckVideo():
+    return invidious_api.checkVideo
+
+@app.get("/api/videos/check/toggle", response_class=PlainTextResponse)
 def toggleVideoCheck():
     global invidious_api
     invidious_api.checkVideo = not invidious_api.checkVideo
