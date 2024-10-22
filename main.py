@@ -297,7 +297,7 @@ def displayAPI():
 @app.get("/api/update", response_class=PlainTextResponse)
 def updateAPI():
     global invidious_api
-    invidious_api = InvidiosAPI()
+    invidious_api = InvidiousAPI()
     return 'Success'
 
 @app.get("/api/channels", response_class=PlainTextResponse)
