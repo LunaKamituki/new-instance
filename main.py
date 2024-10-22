@@ -8,6 +8,7 @@ import os
 import subprocess
 from cache import cache
 import ast
+import pprint
 
 # 3 => (3.0, 1.5)
 max_api_wait_time = (3.0, 1.5)
@@ -256,6 +257,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
     if not(check_cokie(yuki)):
         return redirect("/")
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
+    pprint.pprint(request.user)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs'))
         
