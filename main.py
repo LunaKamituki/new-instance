@@ -47,6 +47,9 @@ os.system("chmod 777 ./yukiverify")
 class APItimeoutError(Exception):
     pass
 
+class UnallowedBot(Exception):
+    pass
+
 def is_json(json_str):
     try:
         json.loads(json_str)
@@ -257,7 +260,9 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
     if not(check_cokie(yuki)):
         return redirect("/")
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
-    pprint.pprint(request.scope["headers"][1][1])
+    if 'Google-Apps-Script' in str(request.scope["headers"][1][1]):
+        raise UnallowedBot("GASのBotは許可されていません")
+        return
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs'))
         
@@ -333,3 +338,7 @@ def page(request: Request, __):
 @app.exception_handler(APItimeoutError)
 def APIwait(request: Request, exception: APItimeoutError):
     return template("apiTimeout.html", {"request": request}, status_code=504)
+
+@app.exception_handler(UnallowedBot)
+def APIwait(request: Request, exception: UnallowedBot):
+    return template("error500.html", {"request": request}, status_code=500)
