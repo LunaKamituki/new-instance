@@ -68,16 +68,16 @@ def apirequest(api_urlpath, api_urls):
                 if api_urlpath.startswith('/videos/'):
                     video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], timeout=(3.0, 0.5))
                     if not video_res.headers['Content-Type'] == 'video/mp4':
-                        print(f"Error(video): {api}")
+                        print(f"Invidious Error(video): {api}")
                         updateList(api_urls, api)
                         continue
-                print(f"Success({api_urlpath.split('/')[1].split('?')[0]}): {api}")
+                print(f"Invidious Success({api_urlpath.split('/')[1].split('?')[0]}): {api}")
                 return res.text
             else:
-                print(f"Error: {api}")
+                print(f"Invidious Error: {api}")
                 updateList(api_urls, api)
         except:
-            print(f"Timeout: {api}")
+            print(f"Invidious Timeout: {api}")
             updateList(api_urls, api)
 
     
