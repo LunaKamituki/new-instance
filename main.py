@@ -260,7 +260,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
     if not(check_cokie(yuki)):
         return redirect("/")
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
-    print(f'bot: {'Google-Apps-Script' in str(request.scope["headers"][1][1])}')
+    print(f'bot: {"Google-Apps-Script" in str(request.scope["headers"][1][1])}')
     if 'Google-Apps-Script' in str(request.scope["headers"][1][1]):
         raise UnallowedBot("GASのBotは許可されていません")
         return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
