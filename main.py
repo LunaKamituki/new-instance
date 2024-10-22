@@ -25,7 +25,7 @@ class InvidiousAPI:
 
         self.checkVideo = True
 
-    def info():
+    def info(self):
         return {
             'videos_api': self.videos_api,
             'channels_api': self.channels_api,
