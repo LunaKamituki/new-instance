@@ -265,7 +265,7 @@ def how_cached():
 def view_commonds(request: Request, yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    return no_robot_meta_tag + how_cached()
+    return how_cached()
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
