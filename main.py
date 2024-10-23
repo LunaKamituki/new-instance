@@ -259,11 +259,10 @@ def view_bbs(request: Request, t: str, channel:Union[str, None]="main", verify: 
 def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[str, None] = "", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
-    print(f'bot: {"Google-Apps-Script" in str(request.scope["headers"][1][1])}')
     if 'Google-Apps-Script' in str(request.scope["headers"][1][1]):
         raise UnallowedBot("GASのBotは許可されていません")
-        return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
+    
+    t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs'))
         
@@ -333,13 +332,13 @@ def toggleVideoCheck():
 
 
 @app.exception_handler(500)
-def page(request: Request, __):
+def error500(request: Request, __):
     return template("error500.html", {"request": request}, status_code=500)
 
 @app.exception_handler(APItimeoutError)
-def APIwait(request: Request, exception: APItimeoutError):
+def apiWait(request: Request, exception: APItimeoutError):
     return template("apiTimeout.html", {"request": request}, status_code=504)
 
 @app.exception_handler(UnallowedBot)
-def APIwait(request: Request, exception: UnallowedBot):
-    return template("error500.html", {"request": request}, status_code=500)
+def returnToUnallowedBot(request: Request, exception: UnallowedBot):
+    return template("error.html", {"request": request, "context": '403 Forbidden'}, status_code=403)
