@@ -295,11 +295,11 @@ def home():
 
 @app.get("/version", response_class=PlainTextResponse)
 def displayVersion():
-    return {'version': version, 'new_instance_version': new_instance_version}
+    return str({'version': version, 'new_instance_version': new_instance_version})
 
 @app.get("/api", response_class=PlainTextResponse)
 def displayAPI():
-    return invidious_api.info()
+    return str(invidious_api.info())
     
 @app.get("/api/update", response_class=PlainTextResponse)
 def updateAPI():
@@ -309,16 +309,16 @@ def updateAPI():
 
 @app.get("/api/channels", response_class=PlainTextResponse)
 def displayChannels():
-    return invidious_api.channels_api
+    return str(invidious_api.channels_api)
 
 @app.get("/api/comments", response_class=PlainTextResponse)
 def displayComments():
-    return invidious_api.comments_api
+    return str(invidious_api.comments_api)
 
 
 @app.get("/api/videos", response_class=PlainTextResponse)
 def displayVideos():
-    return invidious_api.videos_api
+    return str(invidious_api.videos_api)
 
 @app.get("/api/videos/check", response_class=PlainTextResponse)
 def displayCheckVideo():
@@ -333,7 +333,7 @@ def toggleVideoCheck():
 
 @app.exception_handler(500)
 def error500(request: Request, __):
-    return template("error500.html", {"request": request}, status_code=500)
+    return template("error.html", {"request": request, "context": '500 Internal Server Error'}, status_code=500)
 
 @app.exception_handler(APItimeoutError)
 def apiWait(request: Request, exception: APItimeoutError):
