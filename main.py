@@ -63,7 +63,7 @@ def updateList(list, str):
     list.remove(str)
     return list
 
-def apirequest(api_urlpath, api_urls):
+def apirequest(path, api_urls):
     starttime = time.time()
     
     for api in api_urls:
@@ -71,21 +71,21 @@ def apirequest(api_urlpath, api_urls):
             break
             
         try:
-            res = requests.get(api + 'api/v1' + api_urlpath, timeout=max_api_wait_time)
+            res = requests.get(api + 'api/v1' + path, timeout=max_api_wait_time)
             if res.status_code == requests.codes.ok and is_json(res.text):
-                if invidious_api.checkVideo and api_urlpath.startswith('/videos/'):
+                if invidious_api.checkVideo and path.startswith('/videos/'):
                     video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], timeout=(3.0, 0.5))
                     if not video_res.headers['Content-Type'] == 'video/mp4':
-                        print(f"Invidious Failed(video): {api}")
+                        print(f"Invidious No video: {api}")
                         updateList(api_urls, api)
                         continue
-                print(f"Invidious Success({api_urlpath.split('/')[1].split('?')[0]})({invidious_api.checkVideo}): {api}")
+                print(f"Invidious Success({path.split('/')[1].split('?')[0]})({invidious_api.checkVideo}): {api}")
                 return res.text
             else:
-                print(f"Invidious Failed: {api}")
+                print(f"Invidious Bad: {api}")
                 updateList(api_urls, api)
         except:
-            print(f"Invidious Timeout: {api}")
+            print(f"Invidious Failed: {api}")
             updateList(api_urls, api)
 
     
