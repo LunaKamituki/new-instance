@@ -24,7 +24,7 @@ class InvidiousAPI:
         
         [[self.channels_api.append(api), self.comments_api.append(api)] for api in self.videos_api]
 
-        self.checkVideo = True
+        self.checkVideo = False
 
     def info(self):
         return {
@@ -320,6 +320,11 @@ def displayComments():
 def displayVideos():
     return str(invidious_api.videos_api)
 
+
+@app.get("/api/videos/next", response_class=PlainTextResponse)
+def updateVideosAPI():
+    return updateList(invidious_api.videos_api, invidious_api.videos_api[0])
+    
 @app.get("/api/videos/check", response_class=PlainTextResponse)
 def displayCheckVideo():
     return str(invidious_api.checkVideo)
