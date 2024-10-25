@@ -323,7 +323,7 @@ def displayVideos():
 
 @app.get("/api/videos/next", response_class=PlainTextResponse)
 def updateVideosAPI():
-    return updateList(invidious_api.videos_api, invidious_api.videos_api[0])
+    return str(updateList(invidious_api.videos_api, invidious_api.videos_api[0]))
     
 @app.get("/api/videos/check", response_class=PlainTextResponse)
 def displayCheckVideo():
