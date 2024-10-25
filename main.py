@@ -76,10 +76,10 @@ def apirequest(path, api_urls):
                 if invidious_api.checkVideo and path.startswith('/videos/'):
                     video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], timeout=(3.0, 0.5))
                     if not video_res.headers['Content-Type'] == 'video/mp4':
-                        print(f"Invidious No video: {api}")
+                        print(f"Invidious No video(True)({video_res.headers['Content-Type']}): {api}")
                         updateList(api_urls, api)
                         continue
-                print(f"Invidious Success({path.split('/')[1].split('?')[0]})({invidious_api.checkVideo}): {api}")
+                print(f"Invidious Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
                 return res.text
             else:
                 print(f"Invidious Bad: {api}")
