@@ -166,6 +166,7 @@ from typing import Union
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+app.mount("/js", StaticFiles(directory="./js"), name="static")
 app.mount("/css", StaticFiles(directory="./css"), name="static")
 app.mount("/quiz", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -285,6 +286,16 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     
     return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api[0], "Channel_API": invidious_api.channels_api[0], "Comments_API": invidious_api.comments_api[0]})
+
+@app.get("/settings", response_class=HTMLResponse)
+def displaySettings(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
+    if not(check_cokie(yuki)):
+        return redirect("/")
+    response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
+    
+    return template("settings.html", {"request": request})
+
+# TODO: 関数名を改善する
 
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
