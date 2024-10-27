@@ -19,8 +19,12 @@ function setDefaultInfoToNoInfoLocalStorage(){
         
         if(!history) {
             const default_history = {
-                search: [],
-                watch: []
+                search: {
+                    history: []
+                },
+                watch: {
+                    history: []
+                }
             }
 
             localStorage.setItem('history', JSON.stringify(default_history));
