@@ -19,11 +19,9 @@ function setDefaultInfoToNoInfoLocalStorage(){
         
         if(!history) {
             const default_history = {
-                search: {
-                    history: []
-                },
-                watch: {
-                    history: []
+                historys: {
+                    search: [],
+                    watch: []
                 }
             }
 
