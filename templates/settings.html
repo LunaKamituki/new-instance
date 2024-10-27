@@ -2,7 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <script src="/js/utils/cookie.js"></script>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+
+    <script src="/js/utils/cookie.js" defer></script>
+    <script src="/js/localStorageInfo.js" defer></script>
   </head>
   <body>
     <h1>設定 / Settings</h1>
@@ -11,24 +18,24 @@
       <h3>検索・動画</h3>
       <div class="setting">
         
-        <div id="use_history">
+        <div id="enable_history">
           <label>
-            <input class="checkbox history" type="checkbox" checked>
+            <input class="checkbox enable-history" type="checkbox" checked>
             履歴機能
           </label>
 
-          <button onclick="document.getElementById('use_history_advanced_settings').classList.toggle('hidden');">詳細設定</button>
-          <div id="use_history_advanced_settings" class="hidden">
+          <button onclick="document.getElementById('enable_history_advanced_settings').classList.toggle('hidden');">詳細設定</button>
+          <div id="enable_history_advanced_settings" class="hidden">
 
-            <div id="use_search_history" class="history-advanced">
+            <div id="enable_history_search" class="history-advanced">
               <label>
-                <input class="checkbox" type="checkbox" checked>
+                <input class="checkbox enable-history-settings history-advanced-setting" type="checkbox" checked>
                 検索履歴
               </label>
             </div>
-            <div id="use_viewing_history" class="history-advanced">
+            <div id="enable_history_search" class="history-advanced">
               <label>
-                <input class="checkbox" type="checkbox" checked>
+                <input class="checkbox enable-history-settings history-advanced-setting" type="checkbox" checked>
                 視聴履歴
               </label>
             </div>
@@ -37,19 +44,43 @@
 
         </div>
       </div>
-      <script>
-        const now_cookie = new Cookie();
+      <script defer>
+        /*
+          localStorage
+          
+            settings(obj)
+              | - history(obj)
+                    | - enable(bool)
+                    | - search(bool)
+                    | - watch(bool)
+              
+            history(obj)
+              | - search(arr)
+              | - watch(arr)
 
-        const checkboxes = Array.from(document.getElementsByClassName('histroy-advanced'));
+            watchLater(arr)
+        */
 
-        checkboxes.forEach(function(checkbox){
-          // todo: 関数化する
-          now_cookie.set(this.closest('.history-advanced').id, checkbox.checked);
-          checkbox.setAttribute('onclick', function(e){
-            const now_cookie = new Cookie();
-            now_cookie.set(this.closest('.history-advanced').id, checkbox.checked);
-          })
+        setDefaultInfoToNoInfoLocalStorage()
+
+        document.querySelector('#enable_history label input').addEventListener('change', function(e) {
+          let settings_json = JSON.parse(localStorage.getItem('settings'));
+          settings_json['history']['enable'] = this.checked;
+          localStorage.setItem('settings', settings_json);
         })
+
+        const enable_history_settings_elem = Array.from(document.getElementsByClassName('enable-history-settings'));
+        enable_history_settings_elem.forEach(function(elem) {
+
+          elem.addEventListener('change', function() {
+            let settings_json = JSON.parse(localStorage.getItem('settings'))
+            const setting_name = this.closest('div').id.match(/enable_history_(.+)/)[1];
+            settings_json['history'][setting_name] = this.checked;
+            localStorage.setItem('settings', settings_json);
+          })
+
+        })
+        
       </script>
     </div>
     
