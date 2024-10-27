@@ -1,3 +1,19 @@
+/*
+          localStorage
+          
+            settings(obj)
+              | - history(obj)
+                    | - enable(bool)
+                    | - search(bool)
+                    | - watch(bool)
+              
+            history(obj)
+              | - search(arr)
+              | - watch(arr)
+
+            watchLater(arr)
+*/
+
 function setDefaultInfoToNoInfoLocalStorage(){
 
     try{
@@ -19,13 +35,13 @@ function setDefaultInfoToNoInfoLocalStorage(){
         
         if(!history) {
             const default_history = {
-                historys: {
-                    search: [],
-                    watch: []
-                }
+                search: [],
+                watch: []
             }
-
-            localStorage.setItem('history', JSON.stringify(default_history));
+            const json_default_history = JSON.stringify(default_history);
+            console.log(json_default_history)
+            console.log(typeof json_default_history)
+            localStorage.setItem('history', json_default_history);
         }
 
         if(!watchLater) {
