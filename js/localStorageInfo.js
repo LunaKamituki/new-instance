@@ -39,8 +39,6 @@ function setDefaultInfoToNoInfoLocalStorage(){
                 watch: []
             }
             const json_default_history = JSON.stringify(default_history);
-            console.log(json_default_history)
-            console.log(typeof json_default_history)
             localStorage.setItem('history', json_default_history);
         }
 
