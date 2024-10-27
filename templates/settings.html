@@ -55,7 +55,7 @@
         document.querySelector('#enable_history label input').addEventListener('change', function(e) {
           let settings_json = JSON.parse(localStorage.getItem('settings'));
           settings_json['history']['enable'] = this.checked;
-          localStorage.setItem('settings', settings_json);
+          localStorage.setItem('settings', JSON.stringify(settings_json));
         })
 
         const enable_history_settings_elem = Array.from(document.getElementsByClassName('enable-history-settings'));
@@ -65,7 +65,7 @@
             let settings_json = JSON.parse(localStorage.getItem('settings'))
             const setting_name = this.closest('div').id.match(/enable_history_(.+)/)[1];
             settings_json['history'][setting_name] = this.checked;
-            localStorage.setItem('settings', settings_json);
+            localStorage.setItem('settings', JSON.stringify(settings_json));
           })
 
         })

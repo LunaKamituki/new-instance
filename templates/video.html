@@ -195,10 +195,8 @@
 
             if(settings['history']['enable']) {
                 let history = JSON.parse(localStorage.getItem('history'));
-                console.log(JSON.parse(history))
                 history['watch'].push(location.pathname + location.search)
-                console.log(JSON.parse(history))
-                localStorage.setItem('history', history)
+                localStorage.setItem('history', JSON.stringify(history))
             }
             
         </script>
