@@ -19,3 +19,8 @@ function convertToNumCharRef(str){
 function blankCharactersConvertToNumCharRef(str){
     return str.replace(/(\s)/g, matched => convertToNumericCharacterReference(matched))
 }
+
+function getMilliSecTime() {
+    const date = new Date()
+    return date.getTime()
+}
