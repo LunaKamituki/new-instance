@@ -196,7 +196,7 @@
 
             if(settings['history']['enable'] && settings['history']['watch']) {
                 var history = JSON.parse(localStorage.getItem('history'));
-                console.log(history)
+                console.log(history['watch'])
                 // 50件のみ保存
                 if(50 > history['watch'].length) {
                     if(history['watch'].length) {
