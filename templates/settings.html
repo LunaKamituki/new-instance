@@ -11,8 +11,8 @@
   </head>
   <body>
     <div style="float: left;">
-      <a href="location.replace('/')">ホーム</a>
-      <a href="location.replace('/bbs')">BBS</a>
+      <a href="javascript:location.replace('/')">ホーム</a>
+      <a href="javascript:location.replace('/bbs')">BBS</a>
     </div>
     <h1>設定 / Settings</h1>
     
@@ -22,7 +22,7 @@
         
         <div id="enable_history">
           <label>
-            <input class="checkbox enable-history" type="checkbox" checked>
+            <input class="checkbox enable-history" type="checkbox">
             履歴機能
           </label>
 
@@ -31,13 +31,13 @@
 
             <div id="enable_history_search" class="history-advanced">
               <label>
-                <input class="checkbox enable-history-settings history-advanced-setting" type="checkbox" checked>
+                <input class="checkbox enable-history-settings history-advanced-setting" type="checkbox">
                 検索履歴
               </label>
             </div>
             <div id="enable_history_search" class="history-advanced">
               <label>
-                <input class="checkbox enable-history-settings history-advanced-setting" type="checkbox" checked>
+                <input class="checkbox enable-history-settings history-advanced-setting" type="checkbox">
                 視聴履歴
               </label>
             </div>
@@ -52,6 +52,13 @@
 
         setDefaultInfoToNoInfoLocalStorage()
 
+        const settings_json = JSON.parse(localStorage.getItem('settings'));
+        
+        document.querySelector('#inable_history lable input').checked = settings_json['history']['enable']
+        document.querySelector('#inable_history_search lable input').checked = settings_json['history']['search']
+        document.querySelector('#inable_history_watch lable input').checked = settings_json['history']['watch']
+
+        
         document.querySelector('#enable_history label input').addEventListener('change', function(e) {
           let settings_json = JSON.parse(localStorage.getItem('settings'));
           settings_json['history']['enable'] = this.checked;

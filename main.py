@@ -295,6 +295,13 @@ def displaySettings(response: Response, request: Request, yuki: Union[str] = Coo
     
     return template("settings.html", {"request": request})
 
+@app.get("/history{history_name}", response_class=HTMLResponse)
+def displayHistory(request: Request,  yuki: Union[str] = Cookie(None)):
+    if not(check_cokie(yuki)):
+        return redirect("/")
+    return template("history.html", {"request": request, "history_name": history_name})
+
+
 # TODO: 関数名を改善する
 
 @app.get("/reset", response_class=PlainTextResponse)

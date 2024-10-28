@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/js/utils/html.js"></script>
+    </head>
+    <body>
+        {{% if history_name == 'watch' || history_name == 'search' %}}
+            {{% if history_name == 'watch' %}}
+                <h1>視聴履歴</h1>
+            {{% else if history_name == 'search' %}}
+                <h1>検索履歴</h1>
+            {{ % endif % }}
+            <p style="display: none;">{{ history_name }}</p>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>日時</th>
+                        <th>タイトル</th>
+                    </tr>
+                </tbody>
+            </table>
+            <script>
+                
+
+                const history_name = document.querySelector('body p').textContent;
+                
+                const json_history = JSON.parse(localStorage.getItem('history'))
+                const history = json_history[history_name];
+                const history_table = document.querySelector('tbody')
+                const none = '';
+                for(let i = 0; i < history.length; i++) {
+                    history_table.appendChild(createChildElemFromStr({id: '', parentElemName: 'tr', inner_html: `${none}
+                        <td>${new Date(history[i][0])}</td>
+                        <td><a href="/${history_name + history_name[i][1]}">${history[i][2]}</td>
+                    `, class_str: 'history-table'}))
+                }
+                
+            </script>
+        {{% else %}}
+            <p>指定された履歴({{ history_name }})は存在しません。</p>
+        {{% endif %}}
+    </body>
+</html>

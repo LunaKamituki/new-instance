@@ -84,6 +84,7 @@
         </div>
         <div class="pure-u-1 pure-u-md-2-24"></div>
         <script src="/js/localStorageInfo.js"></script>
+        <script src="/js/utils/time.js"></script>
         <script defer>
             document.cookie = "yuki=True;max-age=2592000;";
         
@@ -188,15 +189,22 @@
             }, 1000);
             
 
-            // 履歴
+            // デフォルトの情報をセット
             setDefaultInfoToNoInfoLocalStorage()
 
             const settings = JSON.parse(localStorage.getItem('settings'));
 
-            if(settings['history']['enable']) {
+            if(settings['history']['enable'] && settings['history']['watch']) {
                 let history = JSON.parse(localStorage.getItem('history'));
-                history['watch'].push(location.pathname + location.search)
-                localStorage.setItem('history', JSON.stringify(history))
+                // 50件のみ保存
+                if(50 > history['watch'].length) {
+                    history['watch'].push([getMilliSecTime(), location.search, document.querySelector('h1').textContent])
+                    try{
+                        localStorage.setItem('history', JSON.stringify(history))
+                    }catch(e) {
+                        console.error(e)
+                    }
+                }
             }
             
         </script>
