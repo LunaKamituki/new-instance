@@ -196,6 +196,8 @@
 
             // 有効なら
             if(settings['history']['enable'] && settings['history']['watch']) {
+                const milliSecTime = getMilliSecTime()
+
                 let history_json = JSON.parse(localStorage.getItem('history'));
                 var watch = history_json['watch'];
 
@@ -203,8 +205,6 @@
                 if(watch.length) {
                     // watchが50件以上ある場合
 
-                    const date = new Date()
-                    const milliSecTime = getMilliSecTime()
 
                     // 50件以上あるなら最古のデータを削除
                     if(50 > watch.length) {
@@ -242,7 +242,7 @@
                     // watchが0件の場合
                     watch.push([milliSecTime, location.search, document.querySelector('h1').textContent]);
                     history_json['watch'] = watch;
-                    
+
                     try{
                         localStorage.setItem('history', JSON.stringify(history_json))
                     }catch(e) {
