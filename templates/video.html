@@ -195,32 +195,34 @@
             const settings = JSON.parse(localStorage.getItem('settings'));
 
             if(settings['history']['enable'] && settings['history']['watch']) {
-                var history = JSON.parse(localStorage.getItem('history'));
-                console.log(history['watch'])
+                let history_json = JSON.parse(localStorage.getItem('history'));
+                var watch = history_json['watch']
+                console.log(watch)
                 // 50件のみ保存
-                if(50 > history['watch'].length) {
-                    if(history['watch'].length) {
+                if(50 > watch.length) {
+                    if(watch.length) {
                         const date = new Date()
                         const milliSecTime = getMilliSecTime()
 
-                        for(let i = 0; i < history['watch'].length; i++) {
+                        for(let i = 0; i < watch.length; i++) {
                             // 15minより大きいならbreak
-                            if(milliSecTime - history['watch'][i][0] > 900000) { break }
+                            if(milliSecTime - watch[i][0] > 900000) { break }
                             // 15min以内にクエリパラメータvが同じページにアクセスしているなら
                             // 時間を上書きして最後に移動
-                            if(getParamValue('v') == history['watch'][i][1]) {
-                                history['watch'].push(history['watch'][i])
-                                history['watch'][history['watch'].length - 1][0] = getMilliSecTime()
-                                history.splice(i, 1)
+                            if(getParamValue('v') == watch[i][1]) {
+                                watch.push(watch[i])
+                                watch[watch.length - 1][0] = getMilliSecTime()
+                                watch.splice(i, 1)
                                 break
                             }
                         }
-                        if(!history['watch'][history['watch'].length - 1][0] - milliSecTime) {
-                            history['watch'].push([milliSecTime, location.search, document.querySelector('h1').textContent])
+                        if(!watch[watch.length - 1][0] - milliSecTime) {
+                            watch.push([milliSecTime, location.search, document.querySelector('h1').textContent])
                         }
 
                         try{
-                            localStorage.setItem('history', JSON.stringify(history))
+                            history_json['watch'] = watch;
+                            localStorage.setItem('history', JSON.stringify(history_json))
                         }catch(e) {
                             console.error(e)
                         }
