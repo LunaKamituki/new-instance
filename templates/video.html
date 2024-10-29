@@ -219,9 +219,9 @@
                         if(milliSecTime - watch[i][0] > 900000) { console.log('before 15min history'); break }
 
                         if(getParamValue('v') == watch[i][1]) {
-                            console.log('update time and set watch history')
+                            console.log('update time and set watch history');
+                            watch[i][0] = getMilliSecTime()
                             watch.push(watch[i])
-                            watch[watch.length - 1][0] = getMilliSecTime()
                             watch.splice(i, 1)
                             break
                         }
