@@ -207,7 +207,7 @@
 
 
                     // 50件以上あるなら最古のデータを削除
-                    if(50 > watch.length) {
+                    if(50 >= watch.length) {
                         watch.shift()
                     }
 
@@ -216,27 +216,28 @@
                     for(let i = 0; i < watch.length; i++) {
 
                         // 15minより大きいならbreak
-                        if(milliSecTime - watch[i][0] > 900000) { console.log('before 15min history'); break }
+                        if(millliSecTime - watch[i][0] > 900000) { console.log('before 15min history'); break }
 
                         if(getParamValue('v') == watch[i][1]) {
                             console.log('update time and set watch history');
-                            watch[i][0] = getMilliSecTime()
-                            watch.push(watch[i])
-                            watch.splice(i, 1)
+                            watch[i][0] = milliSecTime;
+                            watch.push(watch[i]);
+                            watch.splice(i, 1);
                             break
                         }
                     }
 
                     if(!watch[watch.length - 1][0] == milliSecTime) {
                         watch.push([milliSecTime, location.search, document.querySelector('h1').textContent])
-                    }
-                    history_json['watch'] = watch;
+                        history_json['watch'] = watch;
 
-                    try{
-                        localStorage.setItem('history', JSON.stringify(history_json))
-                    }catch(e) {
-                        console.error(e)
+                        try {
+                            localStorage.setItem('history', JSON.stringify(history_json))
+                        } catch(e) {
+                            console.error(e)
+                        }
                     }
+                    
 
                 } else {
                     // watchが0件の場合
