@@ -194,48 +194,61 @@
 
             const settings = JSON.parse(localStorage.getItem('settings'));
 
+            // 有効なら
             if(settings['history']['enable'] && settings['history']['watch']) {
                 let history_json = JSON.parse(localStorage.getItem('history'));
-                var watch = history_json['watch']
-                console.log(watch)
-                // 50件のみ保存
-                if(50 > watch.length) {
-                    if(watch.length) {
-                        const date = new Date()
-                        const milliSecTime = getMilliSecTime()
+                var watch = history_json['watch'];
 
-                        for(let i = 0; i < watch.length; i++) {
-                            // 15minより大きいならbreak
-                            if(milliSecTime - watch[i][0] > 900000) { console.log('before 15min history'); break }
-                            // 15min以内にクエリパラメータvが同じページにアクセスしているなら
-                            // 時間を上書きして最後に移動
-                            if(getParamValue('v') == watch[i][1]) {
-                                console.log('update time and set watch history')
-                                watch.push(watch[i])
-                                watch[watch.length - 1][0] = getMilliSecTime()
-                                watch.splice(i, 1)
-                                break
-                            }
-                        }
-                        if(!watch[watch.length - 1][0] - milliSecTime) {
-                            watch.push([milliSecTime, location.search, document.querySelector('h1').textContent])
-                        }
 
-                        try{
-                            history_json['watch'] = watch;
-                            localStorage.setItem('history', JSON.stringify(history_json))
-                        }catch(e) {
-                            console.error(e)
+                if(watch.length) {
+                    // watchが50件以上ある場合
+
+                    const date = new Date()
+                    const milliSecTime = getMilliSecTime()
+
+                    // 50件以上あるなら最古のデータを削除
+                    if(50 > watch.length) {
+                        watch.shift()
+                    }
+
+                    // 15min以内にクエリパラメータvが同じページにアクセスしているなら
+                    // 時間を上書きして最後に移動
+                    for(let i = 0; i < watch.length; i++) {
+
+                        // 15minより大きいならbreak
+                        if(milliSecTime - watch[i][0] > 900000) { console.log('before 15min history'); break }
+
+                        if(getParamValue('v') == watch[i][1]) {
+                            console.log('update time and set watch history')
+                            watch.push(watch[i])
+                            watch[watch.length - 1][0] = getMilliSecTime()
+                            watch.splice(i, 1)
+                            break
                         }
                     }
-                } else {
-                    watch.push([milliSecTime, location.search, document.querySelector('h1').textContent]);
+
+                    if(!watch[watch.length - 1][0] == milliSecTime) {
+                        watch.push([milliSecTime, location.search, document.querySelector('h1').textContent])
+                    }
+                    history_json['watch'] = watch;
+
                     try{
-                        history_json['watch'] = watch;
                         localStorage.setItem('history', JSON.stringify(history_json))
                     }catch(e) {
                         console.error(e)
                     }
+
+                } else {
+                    // watchが0件の場合
+                    watch.push([milliSecTime, location.search, document.querySelector('h1').textContent]);
+                    history_json['watch'] = watch;
+                    
+                    try{
+                        localStorage.setItem('history', JSON.stringify(history_json))
+                    }catch(e) {
+                        console.error(e)
+                    }
+
                 }
             }
             
