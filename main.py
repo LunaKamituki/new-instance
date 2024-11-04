@@ -93,7 +93,7 @@ def apirequest(path, apis):
                         updateList(apis, api)
                         continue
                 print(f"Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
-                return res.text
+                return [res.text, api]
             else:
                 print(f"Returned Err0r: {api}")
                 updateList(apis, api)
@@ -108,11 +108,13 @@ def get_info(request):
 
 def getVideo(videoid):
     try:
-        return apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['success'])
+        success_res = apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['success'])
+        return [json.loads(success_res[0]), success_res[1]]
     except APItimeoutError:
         # success失敗
         try:
-            return json.loads(apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['no_video']))
+            no_video_res = apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['no_video'])
+            return [json.loads(no_video_res[0]), no_video_res[1]]
         except APItimeoutError:
             # no_video失敗
             raise CannotGetVideo("動画の取得に失敗しました") 
@@ -120,8 +122,24 @@ def getVideo(videoid):
 
 
 def get_data(videoid):
-    t = getVideo(videoid)
-    return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
+    t = getVideo(videoid)[0]
+    return [
+        [{
+            "id": i["videoId"],
+            "title": i["title"],
+            "authorId": i["authorId"],
+            "author": i["author"]
+        } for i in t["recommendedVideos"]],
+        
+        list(reversed([i["url"] for i in t["formatStreams"]]))[:2],
+        
+        t["descriptionHtml"].replace("\n", "<br>"),
+        t["title"],
+        t["authorId"],
+        t["author"],
+        t["authorThumbnails"][-1]["url"],
+        t[1]
+    ]
 
 def get_search(q, page):
     t = json.loads(apirequest(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", invidious_api.videos))
@@ -217,7 +235,7 @@ def video(v:str, response: Response, request: Request, yuki: Union[str] = Cookie
     videoid = v
     t = get_data(videoid)
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    return template('video.html', {"request": request, "videoid":videoid, "videourls":t[1], "res":t[0], "description":t[2], "videotitle":t[3], "authorid":t[4], "authoricon":t[6], "author":t[5], "proxy":proxy})
+    return template('video.html', {"request": request, "videoid": videoid, "videourls": t[1], "res": t[0], "description": t[2], "videotitle": t[3], "authorid": t[4], "authoricon": t[6], "author": t[5], 'api': t[7], "proxy": proxy})
 
 @app.get("/search", response_class=HTMLResponse,)
 def search(q:str, response: Response, request: Request, page:Union[int, None]=1, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
@@ -372,3 +390,7 @@ def apiWait(request: Request, exception: APItimeoutError):
 @app.exception_handler(UnallowedBot)
 def returnToUnallowedBot(request: Request, exception: UnallowedBot):
     return template("error.html", {"request": request, "context": '403 Forbidden'}, status_code=403)
+
+@app.exception_handler(CannotGetVideo)
+def returnToUnallowedBot(request: Request, exception: CannotGetVideo):
+    return template("error.html", {"request": request, "context": 'Cannot get video'}, status_code=504)
