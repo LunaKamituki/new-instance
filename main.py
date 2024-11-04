@@ -109,12 +109,12 @@ def get_info(request):
 def getVideo(videoid):
     try:
         success_res = apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['success'])
-        return [json.loads(success_res[0]), success_res[1]]
+        return [json.loads(success_res[0]), [success_res[1], 'success']]
     except APItimeoutError:
         # success失敗
         try:
             no_video_res = apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['no_video'])
-            return [json.loads(no_video_res[0]), no_video_res[1]]
+            return [json.loads(no_video_res[0]), [no_video_res[1], 'no_cideo']]
         except APItimeoutError:
             # no_video失敗
             raise CannotGetVideo("動画の取得に失敗しました") 
@@ -138,7 +138,8 @@ def get_data(videoid):
         t["authorId"],
         t["author"],
         t["authorThumbnails"][-1]["url"],
-        t[1]
+        t[1][0],
+        t[1][1]
     ]
 
 def get_search(q, page):
@@ -235,7 +236,7 @@ def video(v:str, response: Response, request: Request, yuki: Union[str] = Cookie
     videoid = v
     t = get_data(videoid)
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    return template('video.html', {"request": request, "videoid": videoid, "videourls": t[1], "res": t[0], "description": t[2], "videotitle": t[3], "authorid": t[4], "authoricon": t[6], "author": t[5], 'api': t[7], "proxy": proxy})
+    return template('video.html', {"request": request, "videoid": videoid, "videourls": t[1], "res": t[0], "description": t[2], "videotitle": t[3], "authorid": t[4], "authoricon": t[6], "author": t[5], 'api': t[7][0], 'api_list': t[7][1], "proxy": proxy})
 
 @app.get("/search", response_class=HTMLResponse,)
 def search(q:str, response: Response, request: Request, page:Union[int, None]=1, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
@@ -365,8 +366,8 @@ def displayVideos():
 
 
 @app.get("/api/videos/next", response_class=PlainTextResponse)
-def updateVideosAPI():
-    return str(updateList(invidious_api.videos, invidious_api.videos[0]))
+def updateVideosAPI(api, api_list):
+    return str(updateList(invidious_api.videos[api_list], api))
     
 @app.get("/api/videos/check", response_class=PlainTextResponse)
 def displayCheckVideo():
