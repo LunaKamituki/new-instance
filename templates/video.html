@@ -178,7 +178,7 @@
                 if(player.networkState === 3){
                     
                     let update_api_xhr = new XMLHttpRequest();
-                    update_api_xhr.open("GET", "/api/videos/no_video/append/{{ api }}"); 
+                    update_api_xhr.open("GET", "/api/videos/next"); 
                     update_api_xhr.send();
                     
                     info.textContent = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。';
