@@ -42,6 +42,10 @@ url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtu
 version = "1.0"
 new_instance_version = "beta 1.3.2"
 
+header = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'
+}
+
 os.system("chmod 777 ./yukiverify")
 
 class APItimeoutError(Exception):
@@ -71,11 +75,11 @@ def apirequest(path, api_urls):
             break
             
         try:
-            res = requests.get(api + 'api/v1' + path, timeout=max_api_wait_time)
+            res = requests.get(api + 'api/v1' + path, headers=header, timeout=max_api_wait_time)
             if res.status_code == requests.codes.ok and is_json(res.text):
                 if invidious_api.checkVideo and path.startswith('/videos/'):
-                    video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], timeout=(3.0, 0.5))
-                    if not video_res.headers['Content-Type'] == 'video/mp4':
+                    video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], headers=header, timeout=(3.0, 0.5))
+                    if 'text' in video_res.headers['Content-Type']:
                         print(f"Invidious No video(True)({video_res.headers['Content-Type']}): {api}")
                         updateList(api_urls, api)
                         continue
@@ -228,11 +232,11 @@ def comments(request: Request, v:str):
 
 @app.get("/thumbnail")
 def thumbnail(v:str):
-    return Response(content = requests.get(f"https://img.youtube.com/vi/{v}/0.jpg").content, media_type=r"image/jpeg")
+    return Response(content = requests.get(f"https://img.youtube.com/vi/{v}/0.jpg").content, media_type=r"image/jpeg", headers=header)
 
 @app.get("/suggest")
 def suggest(keyword:str):
-    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword)).text[19:-1])[1]]
+    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword), headers=header).text[19:-1])[1]]
 
 
 @cache(seconds=60)
