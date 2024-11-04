@@ -3,7 +3,6 @@ import requests
 import urllib.parse
 import time
 import datetime
-import random
 import os
 import subprocess
 from cache import cache
@@ -17,20 +16,27 @@ max_time = 10
 
 class InvidiousAPI:
     def __init__(self):
-        self.videos_api = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/instances.txt').text)
+        base_url = 'https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/main/'
         
-        self.channels_api = []
-        self.comments_api = []
+        self.videos = {
+            'success': ast.literal_eval(requests.get(base_url + 'success.txt').text),
+            'no_video': ast.literal_eval(requests.get(base_url + 'no_video.txt').text),
+            'returned_error': ast.literal_eval(requests.get(base_url + 'returned_error.txt').text),
+            'error': ast.literal_eval(requests.get(base_url + 'error.txt').text)
+        }
         
-        [[self.channels_api.append(api), self.comments_api.append(api)] for api in self.videos_api]
+        self.channels = []
+        self.comments = []
+        
+        [[self.channels.append(api), self.comments.append(api)] for api in self.videos['success'] + self.videos['no_video'] + self.videos['returned_error']]
 
         self.checkVideo = False
 
     def info(self):
         return {
-            'videos_api': self.videos_api,
-            'channels_api': self.channels_api,
-            'comments_api': self.comments_api,
+            'videos': self.videos,
+            'channels': self.channels,
+            'comments': self.comments,
             'checkVideo': self.checkVideo
         }
 
@@ -51,6 +57,9 @@ os.system("chmod 777 ./yukiverify")
 class APItimeoutError(Exception):
     pass
 
+class CannotGetVideo(Exception):
+    pass
+
 class UnallowedBot(Exception):
     pass
 
@@ -67,10 +76,10 @@ def updateList(list, str):
     list.remove(str)
     return list
 
-def apirequest(path, api_urls):
+def apirequest(path, apis):
     starttime = time.time()
     
-    for api in api_urls:
+    for api in apis:
         if  time.time() - starttime >= max_time - 1:
             break
             
@@ -79,31 +88,43 @@ def apirequest(path, api_urls):
             if res.status_code == requests.codes.ok and is_json(res.text):
                 if invidious_api.checkVideo and path.startswith('/videos/'):
                     video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], headers=header, timeout=(3.0, 0.5))
-                    if 'text' in video_res.headers['Content-Type']:
-                        print(f"Invidious No video(True)({video_res.headers['Content-Type']}): {api}")
-                        updateList(api_urls, api)
+                    if not video_res.headers['Content-Type'].startsWith('video/'):
+                        print(f"No Video(True)({video_res.headers['Content-Type']}): {api}")
+                        updateList(apis, api)
                         continue
-                print(f"Invidious Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
+                print(f"Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
                 return res.text
             else:
-                print(f"Invidious Bad: {api}")
-                updateList(api_urls, api)
+                print(f"Returned Err0r: {api}")
+                updateList(apis, api)
         except:
-            print(f"Invidious Failed: {api}")
-            updateList(api_urls, api)
-
+            print(f"Err0r: {api}")
+            updateList(apis, api)
     
     raise APItimeoutError("APIがタイムアウトしました")
-
+    
 def get_info(request):
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
+def getVideo(videoid):
+    try:
+        return apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['success'])
+    except APItimeoutError:
+        # success失敗
+        try:
+            return json.loads(apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos['no_video']))
+        except APItimeoutError:
+            # no_video失敗
+            raise CannotGetVideo("動画の取得に失敗しました") 
+    return raise CannotGetVideo("動画の取得に失敗しました(fin)") 
+
+
 def get_data(videoid):
-    t = json.loads(apirequest(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.videos_api))
+    t = getVideo(videoid)
     return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedVideos"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def get_search(q, page):
-    t = json.loads(apirequest(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", invidious_api.videos_api))
+    t = json.loads(apirequest(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", invidious_api.videos))
 
     def load_search(i):
         if i["type"] == "video":
@@ -121,7 +142,7 @@ def get_search(q, page):
     return [load_search(i) for i in t]
 
 def get_channel(channelid):
-    t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", invidious_api.channels_api))
+    t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", invidious_api.channels))
     if t["latestVideos"] == []:
         print("APIがチャンネルを返しませんでした")
         apichannels = updateList(apichannels, apichannels[0])
@@ -129,17 +150,17 @@ def get_channel(channelid):
     return [[{"title": i["title"], "id": i["videoId"], "authorId": t["authorId"], "author": t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestVideos"]], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
 
 def get_playlist(listid, page):
-    t = json.loads(apirequest(f"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", invidious_api.videos_api))["videos"]
+    t = json.loads(apirequest(f"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", invidious_api.videos))["videos"]
     return [{"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "type": "video"} for i in t]
 
 def get_comments(videoid):
-    t = json.loads(apirequest(f"/comments/{urllib.parse.quote(videoid)}?hl=jp", invidious_api.comments_api))["comments"]
+    t = json.loads(apirequest(f"/comments/{urllib.parse.quote(videoid)}?hl=jp", invidious_api.comments))["comments"]
     return [{"author": i["author"], "authoricon": i["authorThumbnails"][-1]["url"], "authorid": i["authorId"], "body": i["contentHtml"].replace("\n", "<br>")} for i in t]
 
 '''
 使われていないし戻り値も設定されていないためコメントアウト
 def get_replies(videoid, key):
-    t = json.loads(apirequest(f"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", invidious_api.comments_api))["contentHtml"]
+    t = json.loads(apirequest(f"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", invidious_api.comments))["contentHtml"]
 '''
 
 def check_cokie(cookie):
@@ -288,7 +309,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     
-    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos_api[0], "Channel_API": invidious_api.channels_api[0], "Comments_API": invidious_api.comments_api[0]})
+    return template("info.html", {"request": request, "Youtube_API": invidious_api.videos[0], "Channel_API": invidious_api.channels[0], "comments": invidious_api.comments[0]})
 
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
@@ -313,21 +334,21 @@ def updateAPI():
 
 @app.get("/api/channels", response_class=PlainTextResponse)
 def displayChannels():
-    return str(invidious_api.channels_api)
+    return str(invidious_api.channels)
 
 @app.get("/api/comments", response_class=PlainTextResponse)
 def displayComments():
-    return str(invidious_api.comments_api)
+    return str(invidious_api.comments)
 
 
 @app.get("/api/videos", response_class=PlainTextResponse)
 def displayVideos():
-    return str(invidious_api.videos_api)
+    return str(invidious_api.videos)
 
 
 @app.get("/api/videos/next", response_class=PlainTextResponse)
 def updateVideosAPI():
-    return str(updateList(invidious_api.videos_api, invidious_api.videos_api[0]))
+    return str(updateList(invidious_api.videos, invidious_api.videos[0]))
     
 @app.get("/api/videos/check", response_class=PlainTextResponse)
 def displayCheckVideo():
