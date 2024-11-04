@@ -118,7 +118,7 @@ def getVideo(videoid):
         except APItimeoutError:
             # no_video失敗
             raise CannotGetVideo("動画の取得に失敗しました") 
-    return raise CannotGetVideo("動画の取得に失敗しました(fin)") 
+    raise CannotGetVideo("動画の取得に失敗しました(fin)") 
 
 
 def get_data(videoid):
