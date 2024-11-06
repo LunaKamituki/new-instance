@@ -16,7 +16,7 @@ Render以外でのdeployに必要（あった方が良い）ファイルやデ�
 </a>
 <a href="https://vercel.com/new/clone?repository-url=https://github.com/LunaKamituki/new-instance.git">
   <img src="https://vercel.com/button" alt="Deploy to Vercel">
-</a><
+</a>
 
 [![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?type=git&builder=buildpack&repository=github.com/LunaKamituki/new-instance&branch=main&name=new-instance)
 <br>
