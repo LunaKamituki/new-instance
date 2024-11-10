@@ -112,7 +112,10 @@ def get_search(q, page):
             return {"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "length":str(datetime.timedelta(seconds=i["lengthSeconds"])), "published": i["publishedText"], "type": "video"}
             
         elif i["type"] == "playlist":
-            return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type": "playlist"}
+            try:
+                return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type": "playlist"}
+            except:
+                return {"title": "Load Failed":, "id": "", "thumbnail": "", "count": "", "type": "playlist"}
             
         elif i["authorThumbnails"][-1]["url"].startswith("https"):
             return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type": "channel"}
@@ -121,6 +124,7 @@ def get_search(q, page):
             return {"author": i["author"], "id": i["authorId"], "thumbnail": f"https://{i['authorThumbnails'][-1]['url']}", "type": "channel"}
     
     return [load_search(i) for i in t]
+
 
 def get_channel(channelid):
     t = json.loads(apirequest(f"/channels/{urllib.parse.quote(channelid)}", invidious_api.channels))
