@@ -115,7 +115,7 @@ def get_search(q, page):
             try:
                 return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type": "playlist"}
             except:
-                return {"title": "Load Failed":, "id": "", "thumbnail": "", "count": "", "type": "playlist"}
+                return {"title": "Load Failed", "id": "", "thumbnail": "", "count": "", "type": "playlist"}
             
         elif i["authorThumbnails"][-1]["url"].startswith("https"):
             return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type": "channel"}
