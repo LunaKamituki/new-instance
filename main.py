@@ -119,19 +119,38 @@ def get_search(q, page):
 
     def load_search(i):
         if i["type"] == "video":
-            return {"title": i["title"], "id": i["videoId"], "authorId": i["authorId"], "author": i["author"], "length":str(datetime.timedelta(seconds=i["lengthSeconds"])), "published": i["publishedText"], "type": "video"}
+            return {
+                "title": i["title"] if 'title' in i else 'Load Failed',
+                "id": i["videoId"] if 'videoId' in i else 'Load Failed',
+                "authorId": i["authorId"] if 'authorId' in i else 'Load Failed',
+                "author": i["author"] if 'author' in i else 'Load Failed',
+                "length":str(datetime.timedelta(seconds=i["lengthSeconds"])),
+                "published": i["publishedText"] if 'publishedText' in i else 'Load Failed',
+                "type": "video"
+            }
             
         elif i["type"] == "playlist":
-            try:
-                return {"title": i["title"], "id": i["playlistId"], "thumbnail": i["videos"][0]["videoId"], "count": i["videoCount"], "type": "playlist"}
-            except:
-                return {"title": "Load Failed", "id": "", "thumbnail": "", "count": "", "type": "playlist"}
+            return {
+                    "title": i["title"] if 'title' in i else "Load Failed",
+                    "id": i['videoid'] if 'videoid' in i else "Load Failed",
+                    "thumbnail": i["videos"][0]["videoId"] if 'video' in i and len(i["videos"]) and 'videoId' in i['videos'][0] else "Load Failed",
+                    "count": i["videoCount"] if 'videoCount' in i else "Load Failed",
+                    "type": "playlist"
+                }
             
         elif i["authorThumbnails"][-1]["url"].startswith("https"):
-            return {"author": i["author"], "id": i["authorId"], "thumbnail": i["authorThumbnails"][-1]["url"], "type": "channel"}
-            
+            return {
+                "author": i["author"] if 'author' in i else 'Load Failed',
+                "id": i["authorId"] if 'authorId' in i else 'Load Failed',
+                "thumbnail": i["authorThumbnails"][-1]["url"] if 'authorThumbnails' in i and len(i["authorThumbnails"]) and 'url' in i["authorThumbnails"][-1],
+                "type": "channel"
+            }
         else:
-            return {"author": i["author"], "id": i["authorId"], "thumbnail": f"https://{i['authorThumbnails'][-1]['url']}", "type": "channel"}
+            return {
+                "author": i["author"] if 'author' in i else 'Load Failed',
+                "id": i["authorId"] if 'authorId' in i else 'Load Failed',
+                "thumbnail": f"https://{i['authorThumbnails'][-1]['url']}",
+                "type": "channel"}
     
     return [load_search(i) for i in t]
 
