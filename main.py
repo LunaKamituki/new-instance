@@ -86,7 +86,7 @@ def apirequest(path, api_urls):
                 print(f"Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
                 return res.text
             elif is_json(res.text):
-                print(f"Returned Err0r: {api}('{json.loads(res.text)['error']}')")
+                print(f"Returned Err0r: {api}('{json.loads(res.text)['error'].replace('error', 'err0r')}')")
                 updateList(api_urls, api)
             else:
                 print(f"Returned Err0r: {api}")
