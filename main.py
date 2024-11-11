@@ -14,9 +14,14 @@ max_api_wait_time = (3.0, 1.5)
 # 10 => 10
 max_time = 10
 
+
+header = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'
+}
+
 class InvidiousAPI:
     def __init__(self):
-        self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
+        self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', headers=header, timeout=(1.0, 0.5)).text)
         
         self.channels = []
         self.comments = []
@@ -36,15 +41,12 @@ class InvidiousAPI:
         
 invidious_api = InvidiousAPI()
 
-url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt', headers=header).text.rstrip()
 # url = 'https://yukibbs-server.onrender.com/'
 
 version = "1.0"
 new_instance_version = "1.3.2"
 
-header = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'
-}
 
 os.system("chmod 777 ./yukiverify")
 
@@ -268,13 +270,13 @@ def suggest(keyword:str):
 
 @cache(seconds=120)
 def getSource(name):
-    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html').text
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html', headers=header).text
 
 @app.get("/bbs", response_class=HTMLResponse)
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
-    res = HTMLResponse(no_robot_meta_tag + requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text\
+    res = HTMLResponse(no_robot_meta_tag + requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}, cookies={"yuki":"True"}).text\
                        .replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
     )
     return res
@@ -325,7 +327,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 def home():
     global url, invidious_api
     # url = 'https://yukibbs-server.onrender.com/'
-    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt', headers=header).text.rstrip()
     invidious_api = InvidiousAPI()
     return 'Success'
 
