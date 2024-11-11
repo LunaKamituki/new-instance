@@ -17,7 +17,7 @@ max_time = 10
 class InvidiousAPI:
     def __init__(self):
         # XXX: 修正
-        #self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
+        # self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
         self.videos = [
           'https://inv.nadeko.net/',
           'https://inv.zzls.xyz/',
@@ -46,10 +46,11 @@ class InvidiousAPI:
         
 invidious_api = InvidiousAPI()
 
-url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+# url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+url = 'https://yukibbs-server.onrender.com/'
 
 version = "1.0"
-new_instance_version = "beta 1.3.2"
+new_instance_version = "1.3.2"
 
 header = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'
@@ -309,7 +310,8 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
     global url, invidious_api
-    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+    url = 'https://yukibbs-server.onrender.com/'
+    # url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
     invidious_api = InvidiousAPI()
     return 'Success'
 
