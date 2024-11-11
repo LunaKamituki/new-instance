@@ -257,7 +257,7 @@ def suggest(keyword:str):
 
 @cache(seconds=60)
 def getSource(name):
-    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/main/{name}.html').text
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html').text
 
 @app.get("/bbs", response_class=HTMLResponse)
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
@@ -309,7 +309,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
     global url, invidious_api
-    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
+    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
     invidious_api = InvidiousAPI()
     return 'Success'
 
