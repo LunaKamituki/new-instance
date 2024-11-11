@@ -142,7 +142,7 @@ def get_search(q, page):
             return {
                 "author": i["author"] if 'author' in i else 'Load Failed',
                 "id": i["authorId"] if 'authorId' in i else 'Load Failed',
-                "thumbnail": i["authorThumbnails"][-1]["url"] if 'authorThumbnails' in i and len(i["authorThumbnails"]) and 'url' in i["authorThumbnails"][-1],
+                "thumbnail": i["authorThumbnails"][-1]["url"] if 'authorThumbnails' in i and len(i["authorThumbnails"]) and 'url' in i["authorThumbnails"][-1] else 'Load Failed',
                 "type": "channel"
             }
         else:
