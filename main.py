@@ -16,9 +16,8 @@ max_time = 10
 
 class InvidiousAPI:
     def __init__(self):
-        # XXX: 修正
-        # self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
-        self.videos = [
+        self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
+        # self.videos = [
           'https://inv.nadeko.net/',
           'https://inv.zzls.xyz/',
           'https://invidious.einfachzocken.eu/',
@@ -46,8 +45,8 @@ class InvidiousAPI:
         
 invidious_api = InvidiousAPI()
 
-# url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
-url = 'https://yukibbs-server.onrender.com/'
+url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+# url = 'https://yukibbs-server.onrender.com/'
 
 version = "1.0"
 new_instance_version = "1.3.2"
@@ -150,7 +149,8 @@ def get_search(q, page):
                 "author": i["author"] if 'author' in i else 'Load Failed',
                 "id": i["authorId"] if 'authorId' in i else 'Load Failed',
                 "thumbnail": f"https://{i['authorThumbnails'][-1]['url']}",
-                "type": "channel"}
+                "type": "channel"
+            }
     
     return [load_search(i) for i in t]
 
@@ -275,17 +275,16 @@ def suggest(keyword:str):
     return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword), headers=header).text[19:-1])[1]]
 
 
-@cache(seconds=60)
+@cache(seconds=120)
 def getSource(name):
-    return ''
-    # return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html').text
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html').text
 
 @app.get("/bbs", response_class=HTMLResponse)
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     res = HTMLResponse(no_robot_meta_tag + requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text\
-                       #.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
+                       .replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
     )
     return res
 
@@ -308,12 +307,12 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag\
-                            # + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
+                             + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
         )
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
 
-@cache(seconds=60)
+@cache(seconds=120)
 def how_cached():
     return requests.get(f"{url}bbs/how").text
 
@@ -334,8 +333,8 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
     global url, invidious_api
-    url = 'https://yukibbs-server.onrender.com/'
-    # url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+    # url = 'https://yukibbs-server.onrender.com/'
+    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
     invidious_api = InvidiousAPI()
     return 'Success'
 
@@ -412,8 +411,8 @@ max_time = 10
 class InvidiousAPI:
     def __init__(self):
         # XXX: 修正
-        # self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
-        self.videos = [
+        self.videos = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/instances.txt', timeout=(1.0, 0.5)).text)
+        # self.videos = [
           'https://inv.nadeko.net/',
           'https://inv.zzls.xyz/',
           'https://invidious.einfachzocken.eu/',
@@ -441,8 +440,8 @@ class InvidiousAPI:
         
 invidious_api = InvidiousAPI()
 
-# url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
-url = 'https://yukibbs-server.onrender.com/'
+url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+# url = 'https://yukibbs-server.onrender.com/'
 
 version = "1.0"
 new_instance_version = "1.3.2"
@@ -672,15 +671,14 @@ def suggest(keyword:str):
 
 @cache(seconds=60)
 def getSource(name):
-    return ''
-    # return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html').text
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html').text
 
 @app.get("/bbs", response_class=HTMLResponse)
 def view_bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     res = HTMLResponse(no_robot_meta_tag + requests.get(f"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}", cookies={"yuki":"True"}).text\
-                       #.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
+                       .replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
     )
     return res
 
@@ -703,7 +701,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}&serververify={get_verifycode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag\
-                            # + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
+                            + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs')\
         )
         
     return redirect(f"/bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}")
@@ -729,8 +727,8 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
     global url, invidious_api
-    url = 'https://yukibbs-server.onrender.com/'
-    # url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
+    # url = 'https://yukibbs-server.onrender.com/'
+    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt').text.rstrip()
     invidious_api = InvidiousAPI()
     return 'Success'
 
