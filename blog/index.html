@@ -47,11 +47,11 @@
             function check(){
                 sha256(document.getElementById('check').value).then((hash) => {
                     if(hash === '44edea92c95182eb83bd5e13ddcdf57529b3c1cc41453256d096eca82c70b54e') {
-                        doucment.getElementById('result').textContent = '正解';
+                        document.getElementById('result').textContent = '正解';
                         document.cookie = 'yuki=True; path=/';
                         location.replace('/')
                     } else {
-                        doucment.getElementById('result').textContent = '不正解'
+                        document.getElementById('result').textContent = '不正解'
                     }
                 });
             }
