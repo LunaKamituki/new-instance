@@ -2,19 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>日本の刑法について</title>
+        <title>創世記</title>
         <style>
-            body{
+            body {
                 margin: 0 auto;
             }
             
-            wrapper{
-                margin: 0;
-                padding: 3px;
-                border: solid 3px #ccc;
-            }
-            
-            nav{
+            nav {
                 width: 100%;
                 height: 70px;
                 background-color: dimgray;
@@ -22,31 +16,31 @@
                 box-sizing: border-box;
             }
             
-            ul{
+            nav ul {
                 display: flex;
             }
             
-            li{
+            nav li {
                 list-style: none;
             }
             
-            a{
+            a {
                 display: block;
                 text-decoration: none;
                 color: white;
                 margin-right: 35px;
             }
             
-            #main{
+            main {
                 background-color: #fefefe;
             }
             
         </style>
         <script src="/js/utils/utils.js"></script>
         <script>
-            function check(){
-                sha256(document.getElementById('check').value).then((hash) => {
-                    if(hash === '44edea92c95182eb83bd5e13ddcdf57529b3c1cc41453256d096eca82c70b54e') {
+            function checkAnswer(){
+                sha256(document.getElementById('user_answer').value).then((hash) => {
+                    if(hash === 'b4003030a618a54e83c92ac29756ea2ff0cedb7b06c0cdd5433e9eb0688194a9') {
                         document.getElementById('result').textContent = '正解';
                         document.cookie = 'yuki=True; path=/';
                         location.replace('/')
@@ -58,30 +52,28 @@
         </script>
     </head>
     <body>
-        <div id="wrapper">
             
-            <div id="header">
-                <nav>
-                    <ul>
-                        <li><a>刑法解釈学素人のメモ</a></li>
-                    </ul>
-                </nav>
-            </div>
+        <header>
+            <nav>
+                <ul>
+                    <li>旧約聖書 創世記</li>
+                </ul>
+            </nav>
+        </header>
             
-            <div id="main">
-                <h1>刑法について</h1>
-                <h2>罪刑法定主義について</h2>
-                <p>日本の刑法は「罪刑法定主義」です。</p>
-                <p>罪刑法定主義とは、「法で定められていなければ罪を犯したことにはならない」という考え方です。</p>
-                <p>甲が乙を鋭利な凶器用いて殺害したとしても、法で殺人について記述が一切なければ犯罪犯したとは言えません（道徳的・倫理的・人道的な観点から善くないですが）。</p>
-                <p>どなたの本かは伏せさせて頂きますが、刑法各論及び総論読んだだけの素人が書いたものですので、間違っている箇所等あるかもしれません。</p>
-                <h3>おさらい</h3>
-                <p>Q. 日本の刑法は何主義ですか？</p>
-                <input id="check" type="text">
-                <input type="button" onclick="check()" value="Check">
-                <div id="result"></div>
-            </div>
-            
-        </div>
+        <main>
+            <h1>創世記 - 旧約聖書より</h1>
+            <p>はじめに神は天と地とを創造された。</p>
+            <p>地は形なく、虚しく、闇が淵のおもてにあり、神の霊が水の<ruby>面<rp>(</rp><rt>おもて</rt><rp>)</rp></ruby>を覆っていた。</p>
+            <p>神は「光あれ」と言われた。すると光があった。</p>
+            <p>神はその光を見て、良しとされた。神はその光と闇とを分けられた。</p>
+            <p>神は光を昼と名づけ、闇を夜と名づけられた。夕となり、また朝となった。</p><br><br>
+        </main>
+
+        <footer>
+            <input id="user_answer" type="text" placeholder="創世記はどこに載っていますか？">
+            <button onclick="checkAnswer()">確かめる</button>
+            <p id="result"></p>
+        </footer>
     </body>
 </html>
