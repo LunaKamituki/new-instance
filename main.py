@@ -88,8 +88,8 @@ def requestAPI(path, api_urls):
 
                 if path.startswith('/channel/') and json.loads(res.text)["latestvideo"] == []:
                     print(f"No Channel: {api}")
-                        updateList(api_urls, api)
-                        continue
+                    updateList(api_urls, api)
+                    continue
 
                 print(f"Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
                 return res.text
