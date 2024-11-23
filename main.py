@@ -29,12 +29,12 @@ class InvidiousAPI:
         self.channel = self.all['channel']
         self.comments = self.all['comments']
 
-        self.checkVideo = False
+        self.check_video = False
 
     def info(self):
         return {
             'API': self.all,
-            'checkVideo': self.checkVideo
+            'checkVideo': self.check_video
         }
 
         
@@ -75,10 +75,11 @@ def requestAPI(path, api_urls):
             break
             
         try:
+            print(api + 'api/v1' + path)
             res = requests.get(api + 'api/v1' + path, headers=header, timeout=max_api_wait_time)
             if res.status_code == requests.codes.ok and isJSON(res.text):
                 
-                if invidious_api.checkVideo and path.startswith('/video/'):
+                if invidious_api.check_video and path.startswith('/video/'):
                     # 動画の有無をチェックする場合
                     video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], headers=header, timeout=(3.0, 0.5))
                     if not 'video' in video_res.headers['Content-Type']:
@@ -91,7 +92,7 @@ def requestAPI(path, api_urls):
                     updateList(api_urls, api)
                     continue
 
-                print(f"Success({invidious_api.checkVideo})({path.split('/')[1].split('?')[0]}): {api}")
+                print(f"Success({invidious_api.check_video})({path.split('/')[1].split('?')[0]}): {api}")
                 return res.text
 
             elif isJSON(res.text):
@@ -365,13 +366,13 @@ def updatevideoAPI():
     
 @app.get("/api/video/check", response_class=PlainTextResponse)
 def displayCheckVideo():
-    return str(invidious_api.checkVideo)
+    return str(invidious_api.check_video)
 
 @app.get("/api/video/check/toggle", response_class=PlainTextResponse)
 def toggleVideoCheck():
     global invidious_api
-    invidious_api.checkVideo = not invidious_api.checkVideo
-    return f'{not invidious_api.checkVideo} to {invidious_api.checkVideo}'
+    invidious_api.check_video = not invidious_api.check_video
+    return f'{not invidious_api.check_video} to {invidious_api.check_video}'
 
 
 @app.exception_handler(500)
