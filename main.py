@@ -114,7 +114,7 @@ def getInfo(request):
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
 def getVideoData(videoid):
-    t = json.loads(requestAPI(f"/video/{urllib.parse.quote(videoid)}", invidious_api.video))
+    t = json.loads(requestAPI(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.video))
     return [{"id": i["videoId"], "title": i["title"], "authorId": i["authorId"], "author": i["author"]} for i in t["recommendedvideo"]], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def getSearchData(q, page):
