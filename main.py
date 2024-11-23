@@ -115,18 +115,19 @@ def getInfo(request):
 
 def getVideoData(videoid):
     t = json.loads(requestAPI(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.video))
+    recommended_videos = t["recommendedvideo"] if 'recommendedvideo' in t else {
+        "videoId": "Load Failed",
+        "title": "Load Failed",
+        "authorId": "Load Failed",
+        "author": "Load Failed"
+    }
     return [
         {
             "id": i["videoId"],
             "title": i["title"],
             "authorId": i["authorId"],
             "author": i["author"]
-        } for i in t["recommendedvideo"] if 'recommendedvideo' in t else {
-            "videoId": "Load Failed",
-            "title": "Load Failed",
-            "authorId": "Load Failed",
-            "author": "Load Failed"
-        }
+        } for i in recommended_videos
     ], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
 
 def getSearchData(q, page):
