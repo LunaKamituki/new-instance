@@ -96,7 +96,7 @@ def requestAPI(path, api_urls):
 
             elif isJSON(res.text):
                 # ステータスコードが200ではないかつ内容がJSON形式の場合
-                print(f"Returned Err0r: {api} ('{json.loads(res.text)['error'].replace('error', 'err0r')}')")
+                print(f"Returned Err0r(JSON): {api} ('{json.loads(res.text)['error'].replace('error', 'err0r')}')")
                 updateList(api_urls, api)
             else:
                 # ステータスコードが200ではないかつ内容がJSON形式ではない場合
