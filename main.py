@@ -100,7 +100,7 @@ def requestAPI(path, api_urls):
                 updateList(api_urls, api)
             else:
                 # ステータスコードが200ではないかつ内容がJSON形式ではない場合
-                print(f"Returned Err0r: {api}")
+                print(f"Returned Err0r: {api}({res.text})")
                 updateList(api_urls, api)
         except:
             # 例外等が発生した場合
