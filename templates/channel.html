@@ -34,15 +34,15 @@
                 <div class="pure-g h-box">
                     <div class="pure-u-2-3">
                         <div class="channel-profile">
-                            <img src="{{ channelicon }}">
-                            <span>{{ channelname }}</span>
+                            <img src="{{ channel_icon }}">
+                            <span>{{ channel_name }}</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="h-box">
                     <div id="descriptionWrapper">
-                        <p><span style="white-space:pre-wrap">{{ channelprofile | safe }}</span></p>
+                        <p><span style="white-space:pre-wrap">{{ channel_profile | safe }}</span></p>
                     </div>
                 </div>
                 
@@ -51,11 +51,12 @@
                     {% for result in results %}
                     <div class="pure-u-1 pure-u-md-1-4">
                         <div class="h-box">
+                            
                             {% if result["type"] == "video" %}
                             <a href="/watch?v={{ result['id'] }}" style="width:100%" >
                                 <div class="thumbnail">
                                     <img class="thumbnail" loading="lazy" src="{% if proxy == "True" %}/thumbnail?v={{ result['id'] }}{% else %}https://img.youtube.com/vi/{{ result['id'] }}/0.jpg{% endif %}" onerror="document.cookie = 'proxy=True;max-age=2592000;';">
-                                    <p class="length">{{ result["length"] }}</p>
+                                    <p class="length">{{ result["length_str"] }}</p>
                                 </div>
                                 <p dir="auto">{{ result['title'] }}</p>
                             </a>

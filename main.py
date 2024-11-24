@@ -222,7 +222,7 @@ def getChannelData(channelid):
                 "author": t["author"],
                 "published": i["publishedText"],
                 "view_count_text": i['viewCountText'],
-                "lengthSec": i['lengthSeconds']
+                "length_str": str(datime.timedelta(seconds=i["lengthSeconds"]))
             } for i in latest_videos
         ], {
             # チャンネル情報
@@ -249,11 +249,10 @@ def get_replies(videoid, key):
     t = json.loads(requestAPI(f"/comments/{videoid}?hmac_key={key}&hl=jp&format=html", invidious_api.comments))["contentHtml"]
 '''
 
+
 def checkCookie(cookie):
-    print(cookie)
-    if cookie == "True":
-        return True
-    return False
+    isTrue = True if cookie == "True" else False
+    return isTrue
 
 def getVerifyCode():
     try:
@@ -325,7 +324,7 @@ def channel(channelid:str, response: Response, request: Request, yuki: Union[str
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     t = getChannelData(channelid)
-    return template("channel.html", {"request": request, "results": t[0], "channelname": t[1]["channel_name"], "channelicon": t[1]["channel_icon"], "channelprofile": t[1]["channel_profile"], "proxy": proxy})
+    return template("channel.html", {"request": request, "results": t[0], "channel_name": t[1]["channel_name"], "channel_icon": t[1]["channel_icon"], "channel_profile": t[1]["channel_profile"], proxy": proxy})
 
 @app.get("/playlist", response_class=HTMLResponse)
 def playlist(list:str, response: Response, request: Request, page:Union[int, None]=1, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
