@@ -211,6 +211,7 @@ def getChannelData(channelid):
             "lengthSeconds": "0"
         }
     
+    
     return [
         [
             # 最新の動画
