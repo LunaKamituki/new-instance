@@ -230,7 +230,7 @@ def getChannelData(channelid):
             "channel_name": t["author"],
             "channel_icon": t["authorThumbnails"][-1]["url"],
             "channel_profile": t["descriptionHtml"],
-            "author_banners": t["authorBanners"][0]["url"],
+            "author_banner": t["authorBanners"][0]["url"],
             "subscribers_count": t["subCount"],
             "tags": t["tags"]
         }
