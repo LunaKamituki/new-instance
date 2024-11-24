@@ -11,14 +11,7 @@
         <link rel="stylesheet" href="/css/ionicons.min.css">
         <link rel="stylesheet" href="/css/default.css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
-        <style>
-            #channel_intro {
-                background-image: url('{{ cover_img_url }}');
-                background-size: auto;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }
-        </style>
+
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     </head>
@@ -37,7 +30,7 @@
                         </form>
                     </div>
                 </div>
-                <div id="channel_intro"></div>
+                <img id="cover_img" src="{{ cover_img_url }}" alt="カバー画像"></img>
                 <div class="pure-g h-box">
                     <div class="pure-u-2-3">
                         <div class="channel-profile">
