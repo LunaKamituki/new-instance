@@ -66,7 +66,13 @@
                             <a style="width: 100%;" href="/playlist?list={{ result["id"] }}">
                 
                                 <div class="thumbnail">
-                                    <img loading="lazy" tabindex="-1" class="thumbnail" src="{% if proxy == 'True' %}/thumbnail?v={{ result['thumbnail'] }}{% else %}https://img.youtube.com/vi/{{ result['thumbnail'] }}/0.jpg{% endif %}">
+
+                                    {% if proxy == 'True' %}
+                                    <img loading="lazy" tabindex="-1" class="thumbnail" src="">
+                                    {% else %}
+                                    <img loading="lazy" tabindex="-1" class="thumbnail" src="{{ result['thumbnail'] }}">
+                                    {% endif %}-
+                                    
                                     <p class="length">{{ result["count"] }}個の動画</p>
                                 </div>
                                 <p dir="auto">{{ result["title"] }}</p>
