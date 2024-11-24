@@ -161,15 +161,17 @@ def getSearchData(q, page):
                 "authorId": data_dict["authorId"] if 'authorId' in data_dict else failed,
                 "author": data_dict["author"] if 'author' in data_dict else failed,
                 "published": data_dict["publishedText"] if 'publishedText' in data_dict else failed,
-                "length": str(datetime.timedelta(seconds=data_dict["lengthSeconds"]))
+                "length": str(datetime.timedelta(seconds=data_dict["lengthSeconds"])),
+                "view_count_text": data_dict["viewCountText"],
+                
             }
             
         elif data_dict["type"] == "playlist":
             return {
                     "type": "playlist",
                     "title": data_dict["title"] if 'title' in data_dict else failed,
-                    "id": data_dict['videoid'] if 'videoid' in data_dict else failed,
-                    "thumbnail": data_dict["video"][0]["videoId"] if 'video' in data_dict and len(data_dict["video"]) and 'videoId' in data_dict['video'][0] else failed,
+                    "id": data_dict['playlistId'] if 'playlistId' in data_dict else failed,
+                    "thumbnail": data_dict["playlistThumbnail"] if 'playlistThumbnail' in data_dict else failed,
                     "count": data_dict["videoCount"] if 'videoCount' in data_dict else failed
                 }
             
