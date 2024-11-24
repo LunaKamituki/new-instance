@@ -110,72 +110,88 @@ def requestAPI(path, api_urls):
     
     raise APITimeoutError("APIがタイムアウトしました")
 
+
 def getInfo(request):
     return json.dumps([version, os.environ.get('RENDER_EXTERNAL_URL'), str(request.scope["headers"]), str(request.scope['router'])[39:-2]])
 
+failed = "Load Failed"
+
 def getVideoData(videoid):
     t = json.loads(requestAPI(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.video))
+
     if 'recommendedvideo' in t:
         recommended_videos = t["recommendedvideo"]
     elif 'recommendedVideos' in t:
         recommended_videos = t["recommendedVideos"]
     else:
         recommended_videos = {
-            "videoId": "Load Failed",
-            "title": "Load Failed",
-            "authorId": "Load Failed",
-            "author": "Load Failed"
+            "videoId": failed,
+            "title": failed,
+            "authorId": failed,
+            "author": failed
         }
 
     return [
-        {
-            "id": i["videoId"],
-            "title": i["title"],
-            "authorId": i["authorId"],
-            "author": i["author"]
-        } for i in recommended_videos
-    ], list(reversed([i["url"] for i in t["formatStreams"]]))[:2], t["descriptionHtml"].replace("\n", "<br>"), t["title"], t["authorId"], t["author"], t["authorThumbnails"][-1]["url"]
+        [
+            {
+                "id": i["videoId"],
+                "title": i["title"],
+                "authorId": i["authorId"],
+                "author": i["author"]
+            } for i in recommended_videos
+        ],
+        list(reversed(\
+            [i["url"] for i in t["formatStreams"]]\
+        ))[:2],
+        t["descriptionHtml"].replace("\n", "<br>"),
+        t["title"],
+        t["authorId"],
+        t["author"],
+        t["authorThumbnails"][-1]["url"]
+    ]
 
 def getSearchData(q, page):
 
-    def formatSearchData(i):
-        if i["type"] == "video":
+    def formatSearchData(data_dict):
+        if data_dict["type"] == "video":
             return {
-                "title": i["title"] if 'title' in i else 'Load Failed',
-                "id": i["videoId"] if 'videoId' in i else 'Load Failed',
-                "authorId": i["authorId"] if 'authorId' in i else 'Load Failed',
-                "author": i["author"] if 'author' in i else 'Load Failed',
-                "length":str(datetime.timedelta(seconds=i["lengthSeconds"])),
-                "published": i["publishedText"] if 'publishedText' in i else 'Load Failed',
-                "type": "video"
+                "type": "video",
+                "title": data_dict["title"] if 'title' in i else failed,
+                "id": data_dict["videoId"] if 'videoId' in i else failed,
+                "authorId": data_dict["authorId"] if 'authorId' in i else failed,
+                "author": data_dict["author"] if 'author' in i else failed,
+                "published": data_dict["publishedText"] if 'publishedText' in i else failed,
+                "length": str(datetime.timedelta(seconds=data_dict["lengthSeconds"]))
             }
             
-        elif i["type"] == "playlist":
+        elif data_dict["type"] == "playlist":
             return {
-                    "title": i["title"] if 'title' in i else "Load Failed",
-                    "id": i['videoid'] if 'videoid' in i else "Load Failed",
-                    "thumbnail": i["video"][0]["videoId"] if 'video' in i and len(i["video"]) and 'videoId' in i['video'][0] else "Load Failed",
-                    "count": i["videoCount"] if 'videoCount' in i else "Load Failed",
-                    "type": "playlist"
+                    "type": "playlist",
+                    "title": data_dict["title"] if 'title' in i else failed,
+                    "id": data_dict['videoid'] if 'videoid' in i else failed,
+                    "thumbnail": data_dict["video"][0]["videoId"] if 'video' in i and len(data_dict["video"]) and 'videoId' in data_dict['video'][0] else failed,
+                    "count": data_dict["videoCount"] if 'videoCount' in i else failed
                 }
             
-        elif i["authorThumbnails"][-1]["url"].startswith("https"):
+        elif data_dict["authorThumbnails"][-1]["url"].startswith("https"):
             return {
-                "author": i["author"] if 'author' in i else 'Load Failed',
-                "id": i["authorId"] if 'authorId' in i else 'Load Failed',
-                "thumbnail": i["authorThumbnails"][-1]["url"] if 'authorThumbnails' in i and len(i["authorThumbnails"]) and 'url' in i["authorThumbnails"][-1] else 'Load Failed',
-                "type": "channel"
+                "type": "channel",
+                "author": data_dict["author"] if 'author' in i else failed,
+                "id": data_dict["authorId"] if 'authorId' in i else failed,
+                "thumbnail": data_dict["authorThumbnails"][-1]["url"] if 'authorThumbnails' in i and len(data_dict["authorThumbnails"]) and 'url' in data_dict["authorThumbnails"][-1] else failed
             }
         else:
             return {
-                "author": i["author"] if 'author' in i else 'Load Failed',
-                "id": i["authorId"] if 'authorId' in i else 'Load Failed',
-                "thumbnail": f"https://{i['authorThumbnails'][-1]['url']}",
-                "type": "channel"
+                "type": "channel",
+                "author": data_dict["author"] if 'author' in i else failed,
+                "id": data_dict["authorId"] if 'authorId' in i else failed,
+                "thumbnail": "https://" + data_dict['authorThumbnails'][-1]['url']
             }
 
-    t = json.loads(requestAPI(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", invidious_api.search))
-    return [formatSearchData(i) for i in t]
+    # "datas"というのは気持ち悪いかもしれないが、複数のデータが入っていると明示できるという
+    # メリットの方がコードを書く上では大きい
+    datas_dict = json.loads(requestAPI(f"/search?q={urllib.parse.quote(q)}&page={page}&hl=jp", invidious_api.search))
+    return [formatSearchData(data_dict) for data_dict in datas_dict]
 
 
 def getChannelData(channelid):
@@ -186,24 +202,38 @@ def getChannelData(channelid):
         latest_videos = t['latestVideos']
     else:
         latest_videos = {
-            "title": "Load Failed",
-            "videoId": "Load Failed",
-            "authorId": "Load Failed",
-            "author": "Load Failed",
-            "publishedText": "Load Failed"
+            "title": failed,
+            "videoId": failed,
+            "authorId": failed,
+            "author": failed,
+            "publishedText": failed,
+            "viewCountText": "0",
+            "lengthSeconds": "0"
         }
     
     return [
         [
+            # 最新の動画
             {
+                "type":"video"
                 "title": i["title"],
                 "id": i["videoId"],
                 "authorId": t["authorId"],
                 "author": t["author"],
                 "published": i["publishedText"],
-                "type":"video"
+                "view_count_text": i['viewCountText'],
+                "lengthSec": i['lengthSeconds']
             } for i in latest_videos
-        ], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
+        ], {
+            # チャンネル情報
+            "channel_name": t["author"],
+            "channel_icon": t["authorThumbnails"][-1]["url"],
+            "channel_profile": t["descriptionHtml"],
+            "author_banners": t["authorBanners"][0]["url"],
+            "subscribers_count": t["subCount"],
+            "tags": t["tags"]
+        }
+    ]
 
 def getPlaylistData(listid, page):
     t = json.loads(requestAPI(f"/playlists/{urllib.parse.quote(listid)}?page={urllib.parse.quote(page)}", invidious_api.playlist))["video"]
@@ -295,7 +325,7 @@ def channel(channelid:str, response: Response, request: Request, yuki: Union[str
         return redirect("/")
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
     t = getChannelData(channelid)
-    return template("channel.html", {"request": request, "results": t[0], "channelname": t[1]["channelname"], "channelicon": t[1]["channelicon"], "channelprofile": t[1]["channelprofile"], "proxy": proxy})
+    return template("channel.html", {"request": request, "results": t[0], "channelname": t[1]["channel_name"], "channelicon": t[1]["channel_icon"], "channelprofile": t[1]["channel_profile"], "proxy": proxy})
 
 @app.get("/playlist", response_class=HTMLResponse)
 def playlist(list:str, response: Response, request: Request, page:Union[int, None]=1, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
