@@ -162,7 +162,7 @@ def getSearchData(q, page):
                 "author": data_dict["author"] if 'author' in data_dict else failed,
                 "published": data_dict["publishedText"] if 'publishedText' in data_dict else failed,
                 "length": str(datetime.timedelta(seconds=data_dict["lengthSeconds"])),
-                "view_count_text": data_dict["viewCountText"],
+                "view_count_text": data_dict["viewCountText"]
                 
             }
             
