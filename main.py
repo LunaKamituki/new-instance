@@ -179,7 +179,7 @@ def getSearchData(q, page):
 
 
 def getChannelData(channelid):
-    t = json.loads(requestAPI(f"/channel/{urllib.parse.quote(channelid)}", invidious_api.channel))
+    t = json.loads(requestAPI(f"/channels/{urllib.parse.quote(channelid)}", invidious_api.channel))
     return [[{"title": i["title"], "id": i["videoId"], "authorId": t["authorId"], "author": t["author"], "published": i["publishedText"], "type":"video"} for i in t["latestvideo"]], {"channelname": t["author"], "channelicon": t["authorThumbnails"][-1]["url"], "channelprofile": t["descriptionHtml"]}]
 
 def getPlaylistData(listid, page):
