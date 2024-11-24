@@ -117,7 +117,7 @@ def getVideoData(videoid):
     t = json.loads(requestAPI(f"/videos/{urllib.parse.quote(videoid)}", invidious_api.video))
     if 'recommendedvideo' in t:
         recommended_videos = t["recommendedvideo"]
-    else if 'recommendedVideos' in t:
+    elif 'recommendedVideos' in t:
         recommended_videos = t["recommendedVideos"]
     else:
         recommended_videos = {
@@ -126,7 +126,7 @@ def getVideoData(videoid):
             "authorId": "Load Failed",
             "author": "Load Failed"
         }
-        
+
     return [
         {
             "id": i["videoId"],
