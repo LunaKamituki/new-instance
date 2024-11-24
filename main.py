@@ -222,7 +222,7 @@ def getChannelData(channelid):
                 "author": t["author"],
                 "published": i["publishedText"],
                 "view_count_text": i['viewCountText'],
-                "length_str": str(datime.timedelta(seconds=i["lengthSeconds"]))
+                "length_str": str(datetime.timedelta(seconds=i["lengthSeconds"]))
             } for i in latest_videos
         ], {
             # チャンネル情報
