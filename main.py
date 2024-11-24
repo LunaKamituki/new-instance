@@ -215,7 +215,7 @@ def getChannelData(channelid):
         [
             # 最新の動画
             {
-                "type":"video"
+                "type":"video",
                 "title": i["title"],
                 "id": i["videoId"],
                 "authorId": t["authorId"],
