@@ -230,7 +230,7 @@ def getChannelData(channelid):
             "channel_name": t["author"],
             "channel_icon": t["authorThumbnails"][-1]["url"],
             "channel_profile": t["descriptionHtml"],
-            "author_banner": urllib.parse.quote(t["authorBanners"][0]["url"]) if 'authorBanners' in t and len(t['authorBanners']) else '',
+            "author_banner": urllib.parse.quote(t["authorBanners"][0]["url"], safe="-_.~/:") if 'authorBanners' in t and len(t['authorBanners']) else '',
             "subscribers_count": t["subCount"],
             "tags": t["tags"]
         }
