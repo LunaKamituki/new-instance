@@ -156,35 +156,35 @@ def getSearchData(q, page):
         if data_dict["type"] == "video":
             return {
                 "type": "video",
-                "title": data_dict["title"] if 'title' in i else failed,
-                "id": data_dict["videoId"] if 'videoId' in i else failed,
-                "authorId": data_dict["authorId"] if 'authorId' in i else failed,
-                "author": data_dict["author"] if 'author' in i else failed,
-                "published": data_dict["publishedText"] if 'publishedText' in i else failed,
+                "title": data_dict["title"] if 'title' in data_dict else failed,
+                "id": data_dict["videoId"] if 'videoId' in data_dict else failed,
+                "authorId": data_dict["authorId"] if 'authorId' in data_dict else failed,
+                "author": data_dict["author"] if 'author' in data_dict else failed,
+                "published": data_dict["publishedText"] if 'publishedText' in data_dict else failed,
                 "length": str(datetime.timedelta(seconds=data_dict["lengthSeconds"]))
             }
             
         elif data_dict["type"] == "playlist":
             return {
                     "type": "playlist",
-                    "title": data_dict["title"] if 'title' in i else failed,
-                    "id": data_dict['videoid'] if 'videoid' in i else failed,
-                    "thumbnail": data_dict["video"][0]["videoId"] if 'video' in i and len(data_dict["video"]) and 'videoId' in data_dict['video'][0] else failed,
-                    "count": data_dict["videoCount"] if 'videoCount' in i else failed
+                    "title": data_dict["title"] if 'title' in data_dict else failed,
+                    "id": data_dict['videoid'] if 'videoid' in data_dict else failed,
+                    "thumbnail": data_dict["video"][0]["videoId"] if 'video' in data_dict and len(data_dict["video"]) and 'videoId' in data_dict['video'][0] else failed,
+                    "count": data_dict["videoCount"] if 'videoCount' in data_dict else failed
                 }
             
         elif data_dict["authorThumbnails"][-1]["url"].startswith("https"):
             return {
                 "type": "channel",
-                "author": data_dict["author"] if 'author' in i else failed,
-                "id": data_dict["authorId"] if 'authorId' in i else failed,
-                "thumbnail": data_dict["authorThumbnails"][-1]["url"] if 'authorThumbnails' in i and len(data_dict["authorThumbnails"]) and 'url' in data_dict["authorThumbnails"][-1] else failed
+                "author": data_dict["author"] if 'author' in data_dict else failed,
+                "id": data_dict["authorId"] if 'authorId' in data_dict else failed,
+                "thumbnail": data_dict["authorThumbnails"][-1]["url"] if 'authorThumbnails' in data_dict and len(data_dict["authorThumbnails"]) and 'url' in data_dict["authorThumbnails"][-1] else failed
             }
         else:
             return {
                 "type": "channel",
-                "author": data_dict["author"] if 'author' in i else failed,
-                "id": data_dict["authorId"] if 'authorId' in i else failed,
+                "author": data_dict["author"] if 'author' in data_dict else failed,
+                "id": data_dict["authorId"] if 'authorId' in data_dict else failed,
                 "thumbnail": "https://" + data_dict['authorThumbnails'][-1]['url']
             }
 
@@ -230,7 +230,7 @@ def getChannelData(channelid):
             "channel_name": t["author"],
             "channel_icon": t["authorThumbnails"][-1]["url"],
             "channel_profile": t["descriptionHtml"],
-            "author_banner": t["authorBanners"][0]["url"],
+            "author_banner": urllib.parse.quote(t["authorBanners"][0]["url"]),
             "subscribers_count": t["subCount"],
             "tags": t["tags"]
         }
