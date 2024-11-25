@@ -43,17 +43,15 @@
                     </video>
                 </div>
                 <div class="h-box">
-                    <h1>{{ videotitle }}</h1>
-                    <div style="display: flex;">
-                        <p>{{ view_count }}回再生</p>
-                        <div style="display: flex; float: left;"><span class="material-symbols-outlined">thumb_up</span><p>{{ like_count }}</p></div>
-                    </div>
+                    <h1>{{ video_title }}</h1>
+                    <p style="display: inline-block;">{{ view_count }}回再生</p>
+                    <div style="display: inline-block;"><span class="material-symbols-outlined">thumb_up</span><p>{{ like_count }}</p></div>
                 </div><br>
                 <div class="pure-g">
                     <div class="pure-u-1 pure-u-lg-1-5">
-                        <a href="{{ videourls[0] }}" download="{{ videotitle }}">ダウンロード</a><br>
-                        <a href="javascript:{navigator.share({title: '現時点の動画を共有', text: '{{ videotitle }}', url: location.origin + '/watch?v={{ videoid }}' + '&t=' + Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
-                        <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.href})}">動画を共有</a><br>
+                        <a href="{{ videourls[0] }}" download="{{ video_title }}">ダウンロード</a><br>
+                        <a href="javascript:{navigator.share({title: '現時点の動画を共有', text: '{{ video_title }}', url: location.origin + '/watch?v={{ videoid }}' + '&t=' + Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
+                        <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ video_title }}', url: location.href})}">動画を共有</a><br>
                         <hr>
                     </div>
                     <div class="pure-u-1 pure-u-lg-3-5">
@@ -61,7 +59,7 @@
                                 <a href="/channel/{{ author_id }}" style="display:block;width:fit-content;width:-moz-fit-content">
                                     <div class="channel-profile">
 
-                                        <img src="{{ author_thumbnails_url }}">
+                                        <img src="{{ author_icon }}">
 
                                         <span id="channel-name">{{ author }}</span>
                                     </div>
