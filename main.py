@@ -138,7 +138,7 @@ def getVideoData(videoid):
             'video_urls': list(reversed([i["url"] for i in t["formatStreams"]]))[:2],
             'description_html': t["descriptionHtml"].replace("\n", "<br>"),
             'title': t["title"],
-            'length_text': str(datetime.timedelta(seconds=t["lengthSeconds"]))
+            'length_text': str(datetime.timedelta(seconds=t["lengthSeconds"])),
             'author_id': t["authorId"],
             'author': t["author"],
             'author_thumbnails_url': t["authorThumbnails"][-1]["url"],
