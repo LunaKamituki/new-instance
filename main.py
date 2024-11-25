@@ -347,7 +347,7 @@ def video(v:str, response: Response, request: Request, yuki: Union[str] = Cookie
         "description": video_data[0]['description_html'],
         "videotitle": video_data[0]['title'],
         "authorid": video_data[0]['author_id'],
-        "authoricon": video_data[0]['author_thumbnails'],
+        "authoricon": video_data[0]['author_thumbnails_url'],
         "author": video_data[0]['author'],
         "view_count": video_data[0]['view_count'],
         "like_count": video_data[0]['like_count'],
