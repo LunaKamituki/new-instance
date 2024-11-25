@@ -45,3 +45,16 @@ async function sha256(message) {
 
     return hashHex;
 }
+
+// 秒をhh:mm:ssの形式に直して返す関数
+// ex) console.log(secToHMS(100000));  => 27:46:40
+function secToHMS(seconds) {
+    const hour = Math.floor(seconds / 3600);
+    const min = Math.floor(seconds % 3600 / 60);
+    const sec = seconds % 60;
+    
+    const hh = hour < 100 ? (`00${hour}`).slice(-2) : hour
+    const mm = (`00${min}`).slice(-2);
+    const ss = (`00${sec}`).slice(-2);
+    return `${hh}:${mm}:${ss}`;
+  }
