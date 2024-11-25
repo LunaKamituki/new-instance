@@ -56,7 +56,7 @@
                     </div>
                     <div class="pure-u-1 pure-u-lg-3-5">
                         <div class="h-box">
-                                <a href="/channel/{{ author_id }}" style="display:block;width:fit-content;width:-moz-fit-content">
+                                <a href="/channel/{{ author_id }}" style="display: inline-block; width: fit-content; width: -moz-fit-content">
                                     <div class="channel-profile">
 
                                         <img src="{{ author_icon }}">
@@ -64,7 +64,7 @@
                                         <span id="channel-name">{{ author }}</span>
                                     </div>
                                 </a>
-                                <p>Subscribers: {{ subscribers_count }}</p>
+                                <p style="display: inline-block">Subscribers: {{ subscribers_count }}</p>
                             <div id="description-box">
                                 <div id="descriptionWrapper">{{ description | safe}}</div>
                             </div>
