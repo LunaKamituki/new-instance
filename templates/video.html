@@ -10,16 +10,8 @@
         <link rel="stylesheet" href="/css/ionicons.min.css">
         <link rel="stylesheet" href="/css/default.css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-        <style>
-            /* like button  (google fonts)*/
-            .material-symbols-outlined {
-              font-variation-settings:
-              'FILL' 0,
-              'wght' 400,
-              'GRAD' 0,
-              'opsz' 24
-            }
-        </style>
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=thumb_up" />
 
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -52,8 +44,10 @@
                 </div>
                 <div class="h-box">
                     <h1>{{ videotitle }}</h1>
-                    <p>{{ view_count_text }}回再生</p>
-                    <span class="material-symbols-outlined">thumb_up</span><p>{{ like_count }}</p>
+                    <div style="float: left;">
+                        <p>{{ view_count_text }}回再生</p>
+                        <div style="float: left;"><span class="material-symbols-outlined">thumb_up</span><p>{{ like_count }}</p></div>
+                    </div>
                 </div>
                 <div class="pure-g">
                     <div class="pure-u-1 pure-u-lg-1-5">
@@ -64,15 +58,17 @@
                     </div>
                     <div class="pure-u-1 pure-u-lg-3-5">
                         <div class="h-box">
-                            <a href="/channel/{{ authorid }}" style="display:block;width:fit-content;width:-moz-fit-content">
-                                <div class="channel-profile">
+                            <div style="float: left;">
+                                <a href="/channel/{{ author_id }}" style="display:block;width:fit-content;width:-moz-fit-content">
+                                    <div class="channel-profile">
 
-                                    <img src="{{ authoricon }}">
+                                        <img src="{{ author_thumbnails_url }}">
 
-                                    <span id="channel-name">{{ author }}</span>
-                                    <p><ruby>Subscribers<rp>(</rp><rt>フォロワー数</rt><rp>)</rp></ruby>: {{ subscribers_count }}</p>
-                                </div>
-                            </a>
+                                        <span id="channel-name">{{ author }}</span>
+                                    </div>
+                                </a>
+                                <p>Subscribers: {{ subscribers_count }}</p>
+                            </div>
                             <div id="description-box">
                                 <div id="descriptionWrapper">{{ description | safe}}</div>
                             </div>
@@ -87,7 +83,7 @@
                         {% for rec_video in recommended_videos %}
                         <a href="/watch?v={{ rec_video['id'] }}">
                             <div class="thumbnail">
-                                <img loading="lazy" class="thumbnail" src="{% if proxy == 'True' %}/thumbnail?v={{ rec_video['id'] }}{% else %}https://img.youtube.com/vi/{{ rec_video['id'] }}/0.jpg{% endif %}">
+                                <img loading="lazy" class="thumbnail" src="{% if proxy == 'True' %}/thumbnail?v={{ rec_video['video_id'] }}{% else %}https://img.youtube.com/vi/{{ rec_video['video_id'] }}/0.jpg{% endif %}">
                                 <p class="length">{{ rec_video["length_text"] }}</p>
                             </div>
                             <p style="width:100%;">{{ rec_video["title"] }}</p>
