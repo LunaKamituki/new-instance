@@ -10,7 +10,17 @@
         <link rel="stylesheet" href="/css/ionicons.min.css">
         <link rel="stylesheet" href="/css/default.css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-        
+        <style>
+            /* like button  (google fonts)*/
+            .material-symbols-outlined {
+              font-variation-settings:
+              'FILL' 0,
+              'wght' 400,
+              'GRAD' 0,
+              'opsz' 24
+            }
+        </style>
+
         <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="/js/utils/utils.js"></script>
@@ -35,18 +45,20 @@
                 <div id="player-container" class="h-box">
                     <video id="player" class="on-video_player video-js player-style-invidious" loadedmetadata="settime()" controls="" playsinline="" loop="" style="outline:none;width:100%;background-color:#000;" poster="{% if proxy == "True" %}/thumbnail?v={{ videoid }}{% else %}https://img.youtube.com/vi/{{ videoid }}/0.jpg{% endif %}">
                         {% for videourl in videourls%}
-                        <source src="{{ videourl }}">
+                        <source class="player-source" src="{{ videourl }}">
                         {% endfor %}
                         <p id="video_info">お使いのブラウザは動画の再生に対応していません。</p>
                     </video>
                 </div>
                 <div class="h-box">
                     <h1>{{ videotitle }}</h1>
+                    <p>{{ view_count_text }}回再生</p>
+                    <span class="material-symbols-outlined">thumb_up</span><p>{{ like_count }}</p>
                 </div>
                 <div class="pure-g">
                     <div class="pure-u-1 pure-u-lg-1-5">
                         <a href="{{ videourls[0] }}" download="{{ videotitle }}">ダウンロード</a><br>
-                        <a href="javascript:{navigator.share({title: '現時点の動画を共有', text: '{{ videotitle }}', url: location.protocol + '//' + document.domain + '/watch?v={{ videoid }}' + '&t=' + Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
+                        <a href="javascript:{navigator.share({title: '現時点の動画を共有', text: '{{ videotitle }}', url: location.origin + '/watch?v={{ videoid }}' + '&t=' + Math.floor(document.getElementById('player').currentTime)})}">現時点の動画を共有</a><br>
                         <a href="javascript:{navigator.share({title: '動画を共有', text: '{{ videotitle }}', url: location.href})}">動画を共有</a><br>
                         <hr>
                     </div>
@@ -58,6 +70,7 @@
                                     <img src="{{ authoricon }}">
 
                                     <span id="channel-name">{{ author }}</span>
+                                    <p><ruby>Subscribers<rp>(</rp><rt>フォロワー数</rt><rp>)</rp></ruby>: {{ subscribers_count }}</p>
                                 </div>
                             </a>
                             <div id="description-box">
@@ -71,14 +84,17 @@
                         <!--自動再生 <input id="autonext" type="checkbox"onchange="checkAutoplay()"><br> -->
                         <label for="loop">ループ再生<input id="loop" type="checkbox" onchange="changeLoop()"></label>
                     
-                        {% for re in res %}
-                        <a href="/watch?v={{ re['id'] }}">
+                        {% for rec_video in recommended_videos %}
+                        <a href="/watch?v={{ rec_video['id'] }}">
                             <div class="thumbnail">
-                                <img loading="lazy" class="thumbnail" src="{% if proxy == "True" %}/thumbnail?v={{ re['id'] }}{% else %}https://img.youtube.com/vi/{{ re['id'] }}/0.jpg{% endif %}">
+                                <img loading="lazy" class="thumbnail" src="{% if proxy == 'True' %}/thumbnail?v={{ rec_video['id'] }}{% else %}https://img.youtube.com/vi/{{ rec_video['id'] }}/0.jpg{% endif %}">
+                                <p class="length">{{ rec_video["length_text"] }}</p>
                             </div>
-                            <p style="width:100%;">{{ re["title"] }}</p>
+                            <p style="width:100%;">{{ rec_video["title"] }}</p>
                         </a><br>
-                        <a href="/channel/{{ re['authorId'] }}">{{ re["author"] }}</a>{% endfor %}
+                        <p>{{ view_count_text }}</p>
+                        <a href="/channel/{{ rec_video['authorId'] }}">{{ rec_video["author"] }}</a>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

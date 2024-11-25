@@ -128,26 +128,34 @@ def getVideoData(videoid):
             "videoId": failed,
             "title": failed,
             "authorId": failed,
-            "author": failed
+            "author": failed,
+            "lengthSeconds": 0,
+            "viewCountText": "Load Failed"
         }
 
     return [
+        {
+            'video_urls': list(reversed([i["url"] for i in t["formatStreams"]]))[:2],
+            'description_html': t["descriptionHtml"].replace("\n", "<br>"),
+            'title': t["title"],
+            'length_text': str(datetime.timedelta(seconds=t["lengthSeconds"]))
+            'author_id': t["authorId"],
+            'author': t["author"],
+            'author_thumbnails_url': t["authorThumbnails"][-1]["url"],
+            'view_count': t["viewCount"],
+            'like_count': t["likeCount"],
+            'subscribers_count': t["subCountText"]
+        },
         [
             {
-                "id": i["videoId"],
+                "video_id": i["videoId"],
                 "title": i["title"],
-                "authorId": i["authorId"],
-                "author": i["author"]
+                "author_id": i["authorId"],
+                "author": i["author"],
+                "length_text": str(datetime.timedelta(seconds=i["lengthSeconds"])),
+                "view_count_text": i["viewCountText"]
             } for i in recommended_videos
-        ],
-        list(reversed(\
-            [i["url"] for i in t["formatStreams"]]\
-        ))[:2],
-        t["descriptionHtml"].replace("\n", "<br>"),
-        t["title"],
-        t["authorId"],
-        t["author"],
-        t["authorThumbnails"][-1]["url"]
+        ]
     ]
 
 def getSearchData(q, page):
@@ -300,13 +308,53 @@ def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
 
 @app.get('/watch', response_class=HTMLResponse)
 def video(v:str, response: Response, request: Request, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
+    # v: video_id
     if not(checkCookie(yuki)):
         return redirect("/")
     response.set_cookie(key="yuki", value="True", max_age=7*24*60*60)
-    videoid = v
-    t = getVideoData(videoid)
+    video_data = getVideoData(v)
+    '''
+    return [
+        {
+            'video_urls': list(reversed([i["url"] for i in t["formatStreams"]]))[:2],
+            'description_html': t["descriptionHtml"].replace("\n", "<br>"),
+            'title': t["title"],
+            'length_text': str(datetime.timedelta(seconds=t["lengthSeconds"]))
+            'author_id': t["authorId"],
+            'author': t["author"],
+            'author_thumbnails_url': t["authorThumbnails"][-1]["url"],
+            'view_count': t["viewCount"],
+            'like_count': t["likeCount"],
+            'subscribers_count': t["subCountText"]
+        },
+        [
+            {
+                "video_id": i["videoId"],
+                "title": i["title"],
+                "author_id": i["authorId"],
+                "author": i["author"],
+                "length_text": str(datetime.timedelta(seconds=i["lengthSeconds"])),
+                "view_count_text": i["viewCountText"]
+            } for i in recommended_videos
+        ]
+    ]
+    '''
     response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-    return template('video.html', {"request": request, "videoid":videoid, "videourls":t[1], "res":t[0], "description":t[2], "videotitle":t[3], "authorid":t[4], "authoricon":t[6], "author":t[5], "proxy":proxy})
+    return template('video.html', {
+        "request": request,
+        "videoid": v,
+        "videourls": video_data[0]['video_urls'],
+        "description": video_data[0]['description_html'],
+        "videotitle": video_data[0]['title'],
+        "authorid": video_data[0]['author_id'],
+        "authoricon": video_data[0]['author_thumbnails'],
+        "author": video_data[0]['author'],
+        "view_count": video_data[0]['view_count'],
+        "like_count": video_data[0]['like_count'],
+        "subscribers_count": video_data[0]['subscribers_count'],
+        "recommended_videos": t[1],
+        "proxy":proxy
+    })
 
 @app.get("/search", response_class=HTMLResponse)
 def search(q:str, response: Response, request: Request, page:Union[int, None]=1, yuki: Union[str] = Cookie(None), proxy: Union[str] = Cookie(None)):
