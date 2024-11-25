@@ -44,8 +44,8 @@
                 </div>
                 <div class="h-box">
                     <h1>{{ videotitle }}</h1>
-                    <div style="float: left;">
-                        <p>{{ view_count_text }}回再生</p>
+                    <div style="display: flex;">
+                        <p>{{ view_count }}回再生</p>
                         <div style="float: left;"><span class="material-symbols-outlined">thumb_up</span><p>{{ like_count }}</p></div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         <label for="loop">ループ再生<input id="loop" type="checkbox" onchange="changeLoop()"></label>
                     
                         {% for rec_video in recommended_videos %}
-                        <a href="/watch?v={{ rec_video['id'] }}">
+                        <a href="/watch?v={{ rec_video['video_id'] }}">
                             <div class="thumbnail">
                                 <img loading="lazy" class="thumbnail" src="{% if proxy == 'True' %}/thumbnail?v={{ rec_video['video_id'] }}{% else %}https://img.youtube.com/vi/{{ rec_video['video_id'] }}/0.jpg{% endif %}">
                                 <p class="length">{{ rec_video["length_text"] }}</p>
@@ -149,7 +149,7 @@
         
             /* 
             function sleep(waitMsec) {      var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
-            function autopage() { if (document.getElementById('autonext').checked) {      sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{recommended_videos[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
+            function autopage() { if (document.getElementById('autonext').checked) {      sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{recommended_videos[0]["video_id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
              */
         
             /* 一応残しておく
