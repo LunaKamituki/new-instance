@@ -283,7 +283,7 @@ input[type="search"]::-webkit-search-cancel-button {
  * Video "cards" (results/playlist/channel videos)
  */
 
-.video-card-row { margin: 5px 0px 15px; }
+.video-card-row { margin: 15px 0px 5px; }
 
 .flexible { display: flex; }
 .flex-left  { flex: 1 1 100%; flex-wrap: wrap;   }
