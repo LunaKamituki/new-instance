@@ -50,6 +50,7 @@
                                 
                             <div class="video-card-row flexible">
                                 <div class="flex-left">
+                                    <p class="video-data" dir="auto">{{ result["view_count_text"] }}</p>
                                     <p class="video-data" dir="auto">{{ result["published"] }}</p>
                                 </div>
                             </div>
@@ -67,11 +68,7 @@
                 
                                 <div class="thumbnail">
 
-                                    {% if proxy == 'True' %}
-                                    <img loading="lazy" tabindex="-1" class="thumbnail" src="">
-                                    {% else %}
                                     <img loading="lazy" tabindex="-1" class="thumbnail" src="{{ result['thumbnail'] }}">
-                                    {% endif %}-
                                     
                                     <p class="length">{{ result["count"] }}個の動画</p>
                                 </div>
