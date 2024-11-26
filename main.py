@@ -171,7 +171,6 @@ def getSearchData(q, page):
                 "published": data_dict["publishedText"] if 'publishedText' in data_dict else failed,
                 "length": str(datetime.timedelta(seconds=data_dict["lengthSeconds"])),
                 "view_count_text": data_dict["viewCountText"]
-                
             }
             
         elif data_dict["type"] == "playlist":
@@ -224,8 +223,8 @@ def getChannelData(channelid):
     
     return [
         [
-            # 最新の動画
             {
+                # 直近の動画
                 "type":"video",
                 "title": i["title"],
                 "id": i["videoId"],
