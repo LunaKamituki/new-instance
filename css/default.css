@@ -542,7 +542,7 @@ p,
 
 #descriptionWrapper {
 	max-width: 600px;
-	white-space: pre-wrap;
+	white-space: normal;
 }
 
 /* Center the "invidious" logo on the search page */
