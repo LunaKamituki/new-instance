@@ -44,7 +44,7 @@
                 </div>
                 <div class="h-box">
                     <h1>{{ video_title }}</h1>
-                    <p style="display: inline-block; margin-right: 10px; vertical-align: super;">{{ view_count }}回再生</p>
+                    <p style="display: inline-block; margin-right: 10px; vertical-align: super;">{{ view_count }}回視聴</p>
                     <div style="display: inline-block;"><span class="material-symbols-outlined" style="display: inline-block; padding-right: 5px;">thumb_up</span><p style="display: inline-block; vertical-align: super; ">{{ like_count }}</p></div>
 
                     <p id="player_current_time" style="display: inline-block; margin-left: 10px; vertical-align: super;"></p>
@@ -87,7 +87,7 @@
                             </div>
                             <p style="width:100%;">{{ rec_video["title"] }}</p>
                         </a>
-                        <p>{{ rec_video["view_count_text"] }}回再生</p>
+                        <p>{{ rec_video["view_count_text"] }}回視聴</p>
                         <a href="/channel/{{ rec_video['authorId'] }}">{{ rec_video["author"] }}</a>
                         {% endfor %}
                     </div>
