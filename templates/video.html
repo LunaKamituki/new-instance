@@ -85,8 +85,8 @@
                                 <p class="length">{{ rec_video["length_text"] }}</p>
                             </div>
                             <p style="width:100%;">{{ rec_video["title"] }}</p>
-                        </a><br>
-                        <p>{{ rec_video["view_count_text"] }}</p>
+                        </a>
+                        <p>{{ rec_video["view_count_text"] }}回再生</p>
                         <a href="/channel/{{ rec_video['authorId'] }}">{{ rec_video["author"] }}</a>
                         {% endfor %}
                     </div>
@@ -201,7 +201,7 @@
             (function updateDisplayCurrentTime() {
                 setTimeout(() => {
                     const player = document.getElementById('player');
-                    const current_time_elem = document.getElementsById('player_current_time')
+                    const current_time_elem = document.getElementById('player_current_time')
                     if(player) {
                         current_time_elem.textContent = player.currentTime;
                     } else {
