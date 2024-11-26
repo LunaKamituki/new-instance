@@ -15,7 +15,8 @@ body {
   background-color: rgb(255, 0, 0, 0.5);
 }
 
-.channel-profile > * {
+.channel-profile > span {
+  /* * => span */
   font-size: 1.17em;
   font-weight: bold;
   vertical-align: middle;
