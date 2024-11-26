@@ -46,8 +46,9 @@
                     <h1>{{ video_title }}</h1>
                     <p style="display: inline-block; margin-right: 10px; vertical-align: super;">{{ view_count }}回再生</p>
                     <div style="display: inline-block;"><span class="material-symbols-outlined" style="display: inline-block; padding-right: 5px;">thumb_up</span><p style="display: inline-block; vertical-align: super; ">{{ like_count }}</p></div>
+
                     <p id="player_current_time" style="display: inline-block; margin-left: 10px; vertical-align: super;"></p>
-                    <p style="display: inline-block; vertical-align: super;">/{{ length_text }}</p>
+                    <p style="display: inline-block; vertical-align: super;">/ {{ length_text }}</p>
                 </div><br>
                 <div class="pure-g">
                     <div class="pure-u-1 pure-u-lg-1-5">
@@ -160,7 +161,7 @@
             */
 
 
-            if (!getUrlQuery('t') === undefined) {
+            if (getUrlQuery('t')) {
                 document.getElementById("player").currentTime = getUrlQuery('t');
             }
             
