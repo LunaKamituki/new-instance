@@ -86,7 +86,7 @@
                             </div>
                             <p style="width:100%;">{{ rec_video["title"] }}</p>
                         </a><br>
-                        <p>{{ view_count_text }}</p>
+                        <p>{{ rec_video["view_count_text"] }}</p>
                         <a href="/channel/{{ rec_video['authorId'] }}">{{ rec_video["author"] }}</a>
                         {% endfor %}
                     </div>
@@ -188,7 +188,7 @@
             setTimeout(() => {
                 if(player.networkState === 3){
                     let update_api_xhr = new XMLHttpRequest();
-                    update_api_xhr.open("GET", "/api/videos/next"); 
+                    update_api_xhr.open("GET", "/api/video/next"); 
                     update_api_xhr.send();
                     
                     info.textContent = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。';
@@ -198,15 +198,18 @@
                 }
             }, 1000);
             
-            update_display_current_time_interval = setInterval(() => {
-                const player = document.getElementById('player')
-                if(player) {
-                    document.getElementsById('player_current_time').textContent = player.currentTime;
-                } else {
-                    document.getElementsById('player_current_time').textContent = 'Error';
-                    clearInterval(update_display_current_time_interval);
-                }
-            }, 100)
+            (function updateDisplayCurrentTime() {
+                setTimeout(() => {
+                    const player = document.getElementById('player');
+                    const current_time_elem = document.getElementsById('player_current_time')
+                    if(player) {
+                        current_time_elem.textContent = player.currentTime;
+                    } else {
+                        current_time_elem.textContent = 'Error';
+                    }
+                    updateDisplayCurrentTime();
+                }, 100);
+            })();
         </script>
         <script>
             $('#searchbox').autocomplete({

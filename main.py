@@ -482,7 +482,6 @@ def displayComments():
 def displayvideo():
     return str(invidious_api.video)
 
-
 @app.get("/api/video/next", response_class=PlainTextResponse)
 def updatevideoAPI():
     return str(updateList(invidious_api.video, invidious_api.video[0]))
