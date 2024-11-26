@@ -203,7 +203,7 @@
                     const player = document.getElementById('player');
                     const current_time_elem = document.getElementById('player_current_time')
                     if(player) {
-                        current_time_elem.textContent = player.currentTime | 0;
+                        current_time_elem.textContent = secToHMS(player.currentTime | 0);
                     } else {
                         current_time_elem.textContent = 'Error';
                     }
