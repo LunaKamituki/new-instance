@@ -76,8 +76,8 @@
                         </div>
                     </div>
                     <div class="pure-u-1 pure-u-lg-1-5">
-                        <!--自動再生 <input id="autonext" type="checkbox"onchange="checkAutoplay()"><br> -->
-                        <label for="loop">ループ再生<input id="loop" type="checkbox" onchange="changeLoop()"></label>
+                        <label for="autonextpage">自動連続再生<input id="autonextpage" type="checkbox" onchange="changeAutoNextPage(this)"></label><br>
+                        <label for="loop">ループ再生<input id="loop" type="checkbox" onchange="changeLoop(this)"></label>
                     
                         {% for rec_video in recommended_videos %}
                         <a href="/watch?v={{ rec_video['video_id'] }}">
@@ -97,37 +97,48 @@
         <div class="pure-u-1 pure-u-md-2-24"></div>
         
         <script>
-            document.cookie = "yuki=True;max-age=2592000;";
+            let player = document.getElementById("player");
+
+            document.cookie = "yuki=True;max-age=10800;";
         
-            function elmChecked(id) {     
-                return document.getElementById(id).checked;
+
+            const hasLoopCookie = getCookie("loop")
+            player.loop = hasLoopCookie;
+            document.getElementById("loop").checked = getCookie("loop");
+
+            document.getElementById("autonextpage").checked = getCookie("autonextpage");
+            
+
+            function changeAutoNextPage(checkbox) {      
+                document.cookie =  `autonextpage=${checkbox.checked}; max-age=10800;`;
             }
-        
-            function getCookie(name) {     
-                const pattern = new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")
-                const matches = document.cookie.match(pattern); 
-                return matches ? decodeURIComponent(matches[1]) : undefined;
-            }
-        
-            // document.getElementById("autonext").checked = getCookie("autonext");
-        
-            /* 使われていないし"check"じゃない
-            function checkAutoplay() {      
-                document.cookie = "autonext=" + elmChecked("autonext") + ";max-age=2592000;";
-            }
-            */
-        
-            function changeLoop() {      
-                const hasLoopCookie = elmChecked("loop");
-                document.cookie = "autonext=" + hasLoopCookie + ";max-age=2592000;";
-                document.getElementById("player").loop = hasLoopCookie;
+            
+            function autoNextPage() {
+                const enable_autoNextPage = document.getElementById('autonext').checked;
+                document.cookie = `autonextpage=${enable_autoNextPage}; max-age=10800;`;
+                if (enable_autoNextPage) {
+                    setTimeout(() => {
+                        location.replace("/watch?v={{recommended_videos[0]['video_id']}}");
+                    }, 5000)
+                }
             }
 
-            function getUrlQuery(name) {
-                const url = new URL(window.location.href)
-                return url.searchParams.get(name)
+            player.addEventListener('ended', autoNextPage)
+            
+            function changeLoop(checkbox) {      
+                const enable_loop = checkbox.checked;
+                document.getElementById("player").loop = enable_loop;
+                document.cookie = `loop=${enable_loop}; max-age=10800;`;
             }
+            
+            /* function sleep(waitMsec) {      var startMsec = new Date();while (new Date() - startMsec < waitMsec);} */
 
+            
+
+            if (getUrlQuery('t')) {
+                document.getElementById("player").currentTime = getUrlQuery('t');
+            }
+            
             function keydown(key) {                  
                 if (key.keyCode == 32 || key.keyCode == 75) {
                     const v = document.getElementById("player");
@@ -142,42 +153,30 @@
         
             window.addEventListener('keydown', keydown);
         
-            const hasLoopCookie = getCookie("loop")
-            document.getElementById("loop").checked = hasLoopCookie;
-            document.getElementById("player").loop = hasLoopCookie;
-        
-            /* 
-            function sleep(waitMsec) {      var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
-            function autopage() { if (document.getElementById('autonext').checked) {      sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{recommended_videos[0]["video_id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
-             */
-        
-            /* 一応残しておく
-            if (typeof getUrlQuery('t') === "undefined") {
-                // 恐らく再生する時間だけどこの変数が使われている箇所が見あたらない　
-                t = 0;
-            } else {
-                document.getElementById("player").currentTime = getUrlQuery('t');
-            }
-            */
-
-
-            if (getUrlQuery('t')) {
-                document.getElementById("player").currentTime = getUrlQuery('t');
-            }
-            
             const xhr = new XMLHttpRequest();
             xhr.open("GET", "/comments?v=" + getUrlQuery('v'));
             xhr.onload = function () {      
-                if (xhr.status != 500) {
-                    document.getElementById('comments').innerHTML = xhr.responseText;
-                    console.log('comments_success');
+                if (xhr.status == 200) {
+                    const comments_div = document.getElementById('comments')
+                    comments_div.innerHTML = xhr.responseText;
+
+                    const a_tags = comments_div.getElementsByTagName('a')
+                    for(let i = 0; i < a_tags.length; i++) {
+                        const jump_time = a_tags.getAttribute('data-jump-time')
+
+                        if(jump_time) {
+                            a_tags[i].addEventListener('click', function(e) {
+                                e.preventDefault()
+                                player.currentTime = jump_time;
+                            })
+                        }
+                    }
                 } else { 
                     document.getElementById('comments').innerHTML = "コメントの読み込みに失敗しました。再読み込み等をお試し下さい。"; 
                 }
             };
             xhr.send();
 
-            let player = document.getElementById("player");
             player.style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
 
             let info = document.getElementById('video_info');
@@ -185,6 +184,7 @@
             let reload_button_elm = document.createElement('button');
             reload_button_elm.setAttribute('onclick', 'location.replace(location.href);');
             reload_button_elm.innerHTML = 'リロード';
+            
             
             setTimeout(() => {
                 if(player.networkState === 3){
