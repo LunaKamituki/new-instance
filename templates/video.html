@@ -163,7 +163,7 @@
                     const a_tags = comments_div.getElementsByTagName('a');
 
                     for(let i = 0; i < a_tags.length; i++) {
-                        const jump_time = a_tags.getAttribute('data-jump-time')
+                        const jump_time = a_tags[i].getAttribute('data-jump-time')
 
                         if(jump_time) {
                             a_tags[i].addEventListener('click', function(e) {
