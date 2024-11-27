@@ -135,8 +135,8 @@
 
             
 
-            if (getUrlQuery('t')) {
-                document.getElementById("player").currentTime = getUrlQuery('t');
+            if (getQueryValue('t')) {
+                document.getElementById("player").currentTime = getQueryValue('t');
             }
             
             function keydown(key) {                  
@@ -154,7 +154,7 @@
             window.addEventListener('keydown', keydown);
         
             const xhr = new XMLHttpRequest();
-            xhr.open("GET", "/comments?v=" + getUrlQuery('v'));
+            xhr.open("GET", "/comments?v=" + getQueryValue('v'));
             xhr.onload = function () {      
                 if (xhr.status == 200) {
                     const comments_div = document.getElementById('comments')

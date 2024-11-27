@@ -1,6 +1,6 @@
 // クエリパラメータから指定されたキーの値を返す関数
 // 一致しない場合はnullを返す
-function getParamValue(key){
+function getQueryValue(key){
     const url = new URL(window.location.href);
     return url.searchParams.get(key);
 }
