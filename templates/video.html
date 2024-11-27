@@ -114,11 +114,11 @@
             }
             
             function autoNextPage() {
-                const enable_autoNextPage = document.getElementById('autonext').checked;
+                const enable_autoNextPage = document.getElementById('autonextpage').checked;
                 document.cookie = `autonextpage=${enable_autoNextPage}; max-age=10800;`;
                 if (enable_autoNextPage) {
                     setTimeout(() => {
-                        location.replace("/watch?v={{recommended_videos[0]['video_id']}}");
+                        location.replace("/watch?v={{ recommended_videos[0]['video_id'] }}");
                     }, 5000)
                 }
             }
@@ -157,10 +157,11 @@
             xhr.open("GET", "/comments?v=" + getQueryValue('v'));
             xhr.onload = function () {      
                 if (xhr.status == 200) {
-                    const comments_div = document.getElementById('comments')
+                    let comments_div = document.getElementById('comments');
                     comments_div.innerHTML = xhr.responseText;
 
-                    const a_tags = comments_div.getElementsByTagName('a')
+                    const a_tags = comments_div.getElementsByTagName('a');
+
                     for(let i = 0; i < a_tags.length; i++) {
                         const jump_time = a_tags.getAttribute('data-jump-time')
 
