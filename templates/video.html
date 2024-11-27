@@ -97,6 +97,31 @@
         <div class="pure-u-1 pure-u-md-2-24"></div>
         
         <script>
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "/comments?v=" + getQueryValue('v'));
+            xhr.onload = function () {      
+                if (xhr.status == 200) {
+                    let comments_div = document.getElementById('comments');
+                    comments_div.innerHTML = xhr.responseText;
+
+                    const comments_a_tags = comments_div.getElementsByTagName('a');
+
+                    for(let i = 0; i < comments_a_tags.length; i++) {
+                        const jump_time = comments_a_tags[i].getAttribute('data-jump-time')
+
+                        if(jump_time) {
+                            comments_a_tags[i].addEventListener('click', function(e) {
+                                e.preventDefault()
+                                player.currentTime = jump_time;
+                            })
+                        }
+                    }
+                } else { 
+                    document.getElementById('comments').innerHTML = "コメントの読み込みに失敗しました。再読み込み等をお試し下さい。"; 
+                }
+            };
+            xhr.send();
+
             let player = document.getElementById("player");
 
             document.cookie = "yuki=True;max-age=10800;";
@@ -153,30 +178,18 @@
         
             window.addEventListener('keydown', keydown);
         
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", "/comments?v=" + getQueryValue('v'));
-            xhr.onload = function () {      
-                if (xhr.status == 200) {
-                    let comments_div = document.getElementById('comments');
-                    comments_div.innerHTML = xhr.responseText;
 
-                    const a_tags = comments_div.getElementsByTagName('a');
+            const description_a_tags = getElementById('descriptionWrapper').getElementsByTagName('a');
+            for(let i = 0; i < description_a_tags.length; i++) {
+                const jump_time = description_a_tags[i].getAttribute('data-jump-time')
 
-                    for(let i = 0; i < a_tags.length; i++) {
-                        const jump_time = a_tags[i].getAttribute('data-jump-time')
-
-                        if(jump_time) {
-                            a_tags[i].addEventListener('click', function(e) {
-                                e.preventDefault()
-                                player.currentTime = jump_time;
-                            })
-                        }
-                    }
-                } else { 
-                    document.getElementById('comments').innerHTML = "コメントの読み込みに失敗しました。再読み込み等をお試し下さい。"; 
+                if(jump_time) {
+                    description_a_tags[i].addEventListener('click', function(e) {
+                        e.preventDefault()
+                        player.currentTime = jump_time;
+                    })
                 }
-            };
-            xhr.send();
+            }
 
             player.style.maxHeight = document.documentElement.clientHeight * 0.8 + "px";
 
