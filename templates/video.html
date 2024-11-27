@@ -179,7 +179,7 @@
             window.addEventListener('keydown', keydown);
         
 
-            const description_a_tags = getElementById('descriptionWrapper').getElementsByTagName('a');
+            const description_a_tags = document.getElementById('descriptionWrapper').getElementsByTagName('a');
             for(let i = 0; i < description_a_tags.length; i++) {
                 const jump_time = description_a_tags[i].getAttribute('data-jump-time')
 
