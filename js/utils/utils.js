@@ -1,6 +1,6 @@
 // クエリパラメータから指定されたキーの値を返す関数
 // 一致しない場合はnullを返す
-function getParamValue(key){
+function getQueryValue(key){
     const url = new URL(window.location.href);
     return url.searchParams.get(key);
 }
@@ -58,3 +58,9 @@ function secToHMS(seconds) {
     const ss = (`00${sec}`).slice(-2);
     return `${hh}:${mm}:${ss}`;
   }
+
+  function getCookie(key) {     
+    const pattern = new RegExp("(?:^|; )" + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")
+    const matches = document.cookie.match(pattern); 
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
