@@ -288,7 +288,7 @@ from typing import Union
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/js", StaticFiles(directory="./js"), name="static")
 app.mount("/css", StaticFiles(directory="./css"), name="static")
-app.mount("/genesis", StaticFiles(directory="./blog", html=True), name="static")
+app.mount("/croissantrecipe", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 from fastapi.templating import Jinja2Templates
@@ -302,7 +302,7 @@ def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
         response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
         return template("home.html", {"request": request})
     print(checkCookie(yuki))
-    return redirect("/genesis")
+    return redirect("/croissantrecipe")
 
 
 @app.get('/watch', response_class=HTMLResponse)
