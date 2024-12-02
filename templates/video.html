@@ -131,7 +131,7 @@
             player.loop = hasLoopCookie;
             document.getElementById("loop").checked = getCookie("loop");
 
-            document.getElementById("autonextpage").checked = getCookie("autonextpage");
+            document.getElementById("autonextpage").checked = getCookie("autonextpage") ＝== 'false'? false : true;
             
 
             function changeAutoNextPage(checkbox) {      
