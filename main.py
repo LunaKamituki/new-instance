@@ -101,7 +101,7 @@ def requestAPI(path, api_urls):
                 updateList(api_urls, api)
             else:
                 # ステータスコードが200ではないかつ内容がJSON形式ではない場合
-                print(f"Returned Err0r: {api} ('{res.text}')")
+                print(f"Returned Err0r: {api} ('{res.text}[:100]')")
                 updateList(api_urls, api)
         except:
             # 例外等が発生した場合
@@ -459,7 +459,7 @@ def displayVersion():
     return str({'version': version, 'new_instance_version': new_instance_version})
 
 @app.get("/api/{api_name}", response_class=PlainTextResponse)
-def displayAPI():
+def displayAPI(api_name: str):
   
   match api_name:
     case 'all':
@@ -492,7 +492,7 @@ def updateAllAPI():
     
 
 @app.get("/api/{api_name}/next", response_class=PlainTextResponse)
-def rotateAPI():
+def rotateAPI(api_name: str):
   match api_name:
     case 'video':
       updateList(invidious_api.video, invidious_api.video[0])
