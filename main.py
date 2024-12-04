@@ -458,6 +458,11 @@ def home():
 def displayVersion():
     return str({'version': version, 'new_instance_version': new_instance_version})
 
+@app.get("/api/update", response_class=PlainTextResponse)
+def updateAllAPI():
+  global invidious_api
+  return (invidious_api := InvidiousAPI())
+
 @app.get("/api/{api_name}", response_class=PlainTextResponse)
 def displayAPI(api_name: str):
   
@@ -484,11 +489,6 @@ def displayAPI(api_name: str):
       api_value = f'API Name Error: {api_name}'
         
   return str(api_value)
-    
-@app.get("/api/update", response_class=PlainTextResponse)
-def updateAllAPI():
-  global invidious_api
-  return (invidious_api := InvidiousAPI())
     
 
 @app.get("/api/{api_name}/next", response_class=PlainTextResponse)
