@@ -483,8 +483,7 @@ def displayAPI():
     case _:
       api_value = f'API Name Error: {api_name}'
         
-    finally:
-      return str(api_value)
+  return str(api_value)
     
 @app.get("/api/update", response_class=PlainTextResponse)
 def updateAllAPI():
