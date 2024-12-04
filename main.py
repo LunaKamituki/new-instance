@@ -461,7 +461,7 @@ def displayVersion():
 @app.get("/api/update", response_class=PlainTextResponse)
 def updateAllAPI():
   global invidious_api
-  return str((invidious_api := InvidiousAPI()))
+  return str((invidious_api := InvidiousAPI()).info())
 
 @app.get("/api/{api_name}", response_class=PlainTextResponse)
 def displayAPI(api_name: str):
