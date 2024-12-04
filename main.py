@@ -9,8 +9,8 @@ import subprocess
 from cache import cache
 import ast
 
-# 3 => (3.0, 1.5)
-max_api_wait_time = (3.0, 1.5)
+# 3 => (3.0, 1.5) => (1.5, 1)
+max_api_wait_time = (1.5, 1)
 # 10 => 10
 max_time = 10
 
@@ -458,32 +458,62 @@ def home():
 def displayVersion():
     return str({'version': version, 'new_instance_version': new_instance_version})
 
-@app.get("/api", response_class=PlainTextResponse)
+@app.get("/api/{api_name}", response_class=PlainTextResponse)
 def displayAPI():
-    return str(invidious_api.info())
+  
+  match api_name:
+    case 'all':
+      api_value = invidious_api.info()
+        
+    case 'video':
+      api_value = invidious_api.video
+  
+    case 'search':
+      api_value = invidious_api.search
+  
+    case 'channel':
+      api_value = invidious_api.channel
+  
+    case 'channel':
+      api_value = invidious_api.comments
+
+    case 'playlist':
+      api_value = invidious_api.playlist
+
+    case _:
+      api_value = f'API Name Error: {api_name}'
+        
+    finally:
+      return str(api_value)
     
 @app.get("/api/update", response_class=PlainTextResponse)
-def updateAPI():
-    global invidious_api
-    invidious_api = InvidiousAPI()
-    return 'Success'
+def updateAllAPI():
+  global invidious_api
+  return (invidious_api := InvidiousAPI())
+    
 
-@app.get("/api/channel", response_class=PlainTextResponse)
-def displaychannel():
-    return str(invidious_api.channel)
+@app.get("/api/{api_name}/next", response_class=PlainTextResponse)
+def rotateAPI():
+  match api_name:
+    case 'video':
+      updateList(invidious_api.video, invidious_api.video[0])
+  
+    case 'search':
+      updateList(invidious_api.search, invidious_api.search[0])
+  
+    case 'channel':
+      updateList(invidious_api.channel, invidious_api.channel[0])
+  
+    case 'channel':
+      updateList(invidious_api.comments, invidious_api.comments[0])
 
-@app.get("/api/comments", response_class=PlainTextResponse)
-def displayComments():
-    return str(invidious_api.comments)
+    case 'playlist':
+      updateList(invidious_api.playlist, invidious_api.playlist[0])
 
-
-@app.get("/api/video", response_class=PlainTextResponse)
-def displayvideo():
-    return str(invidious_api.video)
-
-@app.get("/api/video/next", response_class=PlainTextResponse)
-def updatevideoAPI():
-    return str(updateList(invidious_api.video, invidious_api.video[0]))
+    case _:
+      return f'API Name Error: {api_name}'
+        
+  return 'Finish'
     
 @app.get("/api/video/check", response_class=PlainTextResponse)
 def displayCheckVideo():
