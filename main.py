@@ -101,7 +101,7 @@ def requestAPI(path, api_urls):
                 updateList(api_urls, api)
             else:
                 # ステータスコードが200ではないかつ内容がJSON形式ではない場合
-                print(f"Returned Err0r: {api} ('{res.text}[:100]')")
+                print(f"Returned Err0r: {api} ('{res.text[:100]}')")
                 updateList(api_urls, api)
         except:
             # 例外等が発生した場合
@@ -461,7 +461,7 @@ def displayVersion():
 @app.get("/api/update", response_class=PlainTextResponse)
 def updateAllAPI():
   global invidious_api
-  return (invidious_api := InvidiousAPI())
+  return str((invidious_api := InvidiousAPI()))
 
 @app.get("/api/{api_name}", response_class=PlainTextResponse)
 def displayAPI(api_name: str):
