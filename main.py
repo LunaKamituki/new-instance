@@ -479,12 +479,12 @@ def displayAPI(api_name: str):
     case 'channel':
       api_value = invidious_api.channel
   
-    case 'channel':
+    case 'comments':
       api_value = invidious_api.comments
 
     case 'playlist':
       api_value = invidious_api.playlist
-
+      
     case _:
       api_value = f'API Name Error: {api_name}'
         
@@ -503,7 +503,7 @@ def rotateAPI(api_name: str):
     case 'channel':
       updateList(invidious_api.channel, invidious_api.channel[0])
   
-    case 'channel':
+    case 'comments':
       updateList(invidious_api.comments, invidious_api.comments[0])
 
     case 'playlist':
