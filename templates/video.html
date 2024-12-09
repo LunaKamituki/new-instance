@@ -204,7 +204,8 @@
                     update_api_xhr.open("GET", "/api/video/next"); 
                     update_api_xhr.send();
                     
-                    info.textContent = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。';
+                    info.innerHTML = '動画の読み込みに失敗しました。再読み込み等をお試し下さい。<br>';
+                    info.innerHTML += '過度な再読み込みはインスタンスに負荷がかかり、短期間で使用不能に陥ることや、動画等の読み込みが出来なくなることが考えられますのでご遠慮下さい。
                     player.after(reload_button_elm)
                     player.after(info)
                     player.remove()
