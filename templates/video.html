@@ -101,7 +101,7 @@
             xhr.open("GET", "/comments?v=" + getQueryValue('v'));
             xhr.onload = function () {      
                 if (xhr.status == 200) {
-                    let comments_div = document.getElementById('comments');
+                    const comments_div = document.getElementById('comments');
                     comments_div.innerHTML = xhr.responseText;
 
                     const comments_a_tags = comments_div.getElementsByTagName('a');
@@ -124,18 +124,18 @@
 
             let player = document.getElementById("player");
 
-            document.cookie = "yuki=True;max-age=10800;";
+            document.cookie = "yuki=True; path=/; max-age=10800;";
         
 
-            const hasLoopCookie = getCookie("loop")
-            player.loop = hasLoopCookie;
-            document.getElementById("loop").checked = getCookie("loop");
+            const haveLoopCookie = getCookie("loop") === 'true' ? true : false;
+            player.loop = haveLoopCookie;
+            document.getElementById("loop").checked = haveLoopCookie;
 
-            document.getElementById("autonextpage").checked = getCookie("autonextpage") === 'true'? true : false;
+            document.getElementById("autonextpage").checked = getCookie("autonextpage") === 'true' ? true : false;
             
 
             function changeAutoNextPage(checkbox) {      
-                document.cookie =  `autonextpage=${checkbox.checked}; max-age=10800;`;
+                document.cookie =  `autonextpage=${checkbox.checked}; path=/; max-age=10800;`;
             }
             
             function autoNextPage() {
@@ -153,7 +153,7 @@
             function changeLoop(checkbox) {      
                 const enable_loop = checkbox.checked;
                 document.getElementById("player").loop = enable_loop;
-                document.cookie = `loop=${enable_loop}; max-age=10800;`;
+                document.cookie = `loop=${enable_loop}; path=/; max-age=10800;`;
             }
             
             /* function sleep(waitMsec) {      var startMsec = new Date();while (new Date() - startMsec < waitMsec);} */
