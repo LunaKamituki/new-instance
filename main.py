@@ -289,6 +289,7 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/js", StaticFiles(directory="./statics/js"), name="static")
 app.mount("/css", StaticFiles(directory="./statics/css"), name="static")
 app.mount("/img", StaticFiles(directory="./statics/img"), name="static")
+app.mount("/favicon.ico", StaticFiles(directory="./statics/img/logo/favicon.ico"), name="static")
 app.mount("/genesis", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
