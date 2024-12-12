@@ -14,14 +14,32 @@ max_api_wait_time = (1.5, 1)
 # 10 => 10
 max_time = 10
 
+user_agents = [
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3864.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:62.0) Gecko/20100101 Firefox/62.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:67.0) Gecko/20100101 Firefox/67.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0) Gecko/20100101 Firefox/68.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 Edg/94.0.992.31',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15',
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 12_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Mobile/15E148 Safari/604.1'
+]
 
-header = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'
-}
+def getRandomUserAgent():
+  return {
+    'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)]
+  }
 
 class InvidiousAPI:
     def __init__(self):
-        self.all = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/main.txt', headers=header, timeout=(1.0, 0.5)).text)
+        self.all = ast.literal_eval(requests.get('https://raw.githubusercontent.com/LunaKamituki/yukiyoutube-inv-instances/refs/heads/main/main.txt', headers=getRandomUserAgent(), timeout=(1.0, 0.5)).text)
         
         self.video = self.all['video']
         self.playlist = self.all['playlist']
@@ -40,7 +58,7 @@ class InvidiousAPI:
         
 invidious_api = InvidiousAPI()
 
-url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt', headers=header).text.rstrip()
+url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt', headers=getRandomUserAgent()).text.rstrip()
 
 version = "1.0"
 new_instance_version = "1.3.2"
@@ -76,12 +94,12 @@ def requestAPI(path, api_urls):
             
         try:
             print(api + 'api/v1' + path)
-            res = requests.get(api + 'api/v1' + path, headers=header, timeout=max_api_wait_time)
+            res = requests.get(api + 'api/v1' + path, headers=getRandomUserAgent(), timeout=max_api_wait_time)
             if res.status_code == requests.codes.ok and isJSON(res.text):
                 
                 if invidious_api.check_video and path.startswith('/video/'):
                     # 動画の有無をチェックする場合
-                    video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], headers=header, timeout=(3.0, 0.5))
+                    video_res = requests.get(json.loads(res.text)['formatStreams'][0]['url'], headers=getRandomUserAgent(), timeout=(3.0, 0.5))
                     if not 'video' in video_res.headers['Content-Type']:
                         print(f"No Video(True)({video_res.headers['Content-Type']}): {api}")
                         updateList(api_urls, api)
@@ -395,7 +413,7 @@ def thumbnail(v:str):
 
 @app.get("/suggest")
 def suggest(keyword:str):
-    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword), headers=header).text[19:-1])[1]]
+    return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword), headers=getRandomUserAgent()).text[19:-1])[1]]
 
 
 
@@ -403,7 +421,7 @@ def suggest(keyword:str):
 
 @cache(seconds=120)
 def getSource(name):
-    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html', headers=header).text
+    return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html', headers=getRandomUserAgent()).text
 
 @app.get("/bbs", response_class=HTMLResponse)
 def bbs(request: Request, name: Union[str, None] = "", seed:Union[str, None]="", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
@@ -456,7 +474,7 @@ def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(Non
 @app.get("/reset", response_class=PlainTextResponse)
 def home():
     global url, invidious_api
-    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt', headers=header).text.rstrip()
+    url = requests.get('https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/refs/heads/main/instance.txt', headers=getRandomUserAgent()).text.rstrip()
     invidious_api = InvidiousAPI()
     return 'Success'
 
