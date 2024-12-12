@@ -286,8 +286,9 @@ from typing import Union
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
-app.mount("/js", StaticFiles(directory="./js"), name="static")
-app.mount("/css", StaticFiles(directory="./css"), name="static")
+app.mount("/js", StaticFiles(directory="./statics/js"), name="static")
+app.mount("/css", StaticFiles(directory="./statics/css"), name="static")
+app.mount("/img", StaticFiles(directory="./statics/img"), name="static")
 app.mount("/genesis", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
@@ -397,6 +398,9 @@ def suggest(keyword:str):
     return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword), headers=header).text[19:-1])[1]]
 
 
+
+
+
 @cache(seconds=120)
 def getSource(name):
     return requests.get(f'https://raw.githubusercontent.com/LunaKamituki/yuki-source/refs/heads/main/{name}.html', headers=header).text
@@ -438,6 +442,8 @@ def view_commonds(request: Request, yuki: Union[str] = Cookie(None)):
     if not(checkCookie(yuki)):
         return redirect("/")
     return getCachedBBSHow()
+
+
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
