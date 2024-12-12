@@ -33,8 +33,10 @@ user_agents = [
 ]
 
 def getRandomUserAgent():
+  user_agent = user_agents[random.randint(0, len(user_agents) - 1)]
+  print(user_agent)
   return {
-    'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)]
+    'User-Agent': user_agent
   }
 
 class InvidiousAPI:
