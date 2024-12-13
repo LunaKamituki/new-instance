@@ -420,7 +420,7 @@ def suggest(keyword:str):
 
 @app.get('/reform')
 def displayReformPage():
-  return requests.get('https://github.com/LunaKamituki/New-Instance-Reform-HTML/raw/refs/heads/main/index.html', headers=getRandomUserAgent()).text
+  return HTMLResponse(requests.get('https://github.com/LunaKamituki/New-Instance-Reform-HTML/raw/refs/heads/main/index.html', headers=getRandomUserAgent()).text)
 
 
 @cache(seconds=120)
