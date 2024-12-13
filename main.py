@@ -418,7 +418,9 @@ def suggest(keyword:str):
     return [i[0] for i in json.loads(requests.get("http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q=" + urllib.parse.quote(keyword), headers=getRandomUserAgent()).text[19:-1])[1]]
 
 
-
+@app.get('/reform')
+def displayReformPage():
+  return requests.get('https://github.com/LunaKamituki/New-Instance-Reform-HTML/raw/refs/heads/main/index.html', headers=getRandomUserAgent()).text
 
 
 @cache(seconds=120)
