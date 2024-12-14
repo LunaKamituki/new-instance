@@ -33,10 +33,8 @@ user_agents = [
 ]
 
 def getRandomUserAgent():
-  user_agent = user_agents[random.randint(0, len(user_agents) - 1)]
-  print(user_agent)
   return {
-    'User-Agent': user_agent
+    'User-Agent': user_agents[random.randint(0, len(user_agents) - 1)]
   }
 
 class InvidiousAPI:
@@ -306,6 +304,7 @@ from typing import Union
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
 app.mount("/js", StaticFiles(directory="./statics/js"), name="static")
 app.mount("/css", StaticFiles(directory="./statics/css"), name="static")
 app.mount("/img", StaticFiles(directory="./statics/img"), name="static")
@@ -313,15 +312,14 @@ app.mount("/genesis", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 from fastapi.templating import Jinja2Templates
-template = Jinja2Templates(directory='templates').TemplateResponse
+template = Jinja2Templates(directory='./statics/html').TemplateResponse
 
 no_robot_meta_tag = '<meta name="robots" content="noindex,nofollow">'
 
 @app.get("/", response_class=HTMLResponse)
 def home(response: Response, request: Request, yuki: Union[str] = Cookie(None)):
-    if checkCookie(yuki):
-        response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
-        return template("home.html", {"request": request})
+    response.set_cookie("yuki", "True", max_age=60 * 60 * 24 * 7)
+    return template("home.html", {"request": request})
     print(checkCookie(yuki))
     return redirect("/genesis")
 
