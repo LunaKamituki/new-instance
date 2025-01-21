@@ -71,9 +71,6 @@ os.system("chmod 777 ./yukiverify")
 class APITimeoutError(Exception):
     pass
 
-class UnallowedBot(Exception):
-    pass
-
 def isJSON(json_str):
     try:
         json.loads(json_str)
@@ -444,9 +441,6 @@ def bbsAPI(request: Request, t: str, channel:Union[str, None]="main", verify: Un
 def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[str, None] = "", channel:Union[str, None]="main", verify:Union[str, None]="false", yuki: Union[str] = Cookie(None)):
     if not(checkCookie(yuki)):
         return redirect("/")
-    if 'Google-Apps-Script' in str(request.scope["headers"][1][1]):
-        raise UnallowedBot("GASのBotは許可されていません")
-    
     t = requests.get(f"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(getInfo(request))}&serververify={getVerifyCode()}", cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs'))
