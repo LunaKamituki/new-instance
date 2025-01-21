@@ -552,7 +552,3 @@ def error500(request: Request, __):
 @app.exception_handler(APITimeoutError)
 def apiWait(request: Request, exception: APITimeoutError):
     return template("apiTimeout.html", {"request": request}, status_code=504)
-
-@app.exception_handler(UnallowedBot)
-def returnToUnallowedBot(request: Request, exception: UnallowedBot):
-    return template("error.html", {"request": request, "context": '403 Forbidden'}, status_code=403)
