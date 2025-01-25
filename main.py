@@ -448,16 +448,16 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
         raise UnallowedBot("GASのBotは許可されていません")
       
     param = {
-      name: urllib.parse.quote(name),
-      message: urllib.parse.quote(message),
-      seed: urllib.parse.quote(seed),
-      channel: urllib.parse.quote(channel),
-      verify: urllib.parse.quote(verify),
-      info: urllib.parse.quote(getInfo(request)),
-      serververify: getVerifyCode()
+      'name': urllib.parse.quote(name),
+      'message': urllib.parse.quote(message),
+      'seed': urllib.parse.quote(seed),
+      'channel': urllib.parse.quote(channel),
+      'verify': urllib.parse.quote(verify),
+      'info': urllib.parse.quote(getInfo(request)),
+      'serververify': getVerifyCode()
     }
   
-    t = requests.post(f"{url}bbs/result", json = param, cookies={"yuki":"True"}, allow_redirects=False)
+    t = requests.post(f"{url}bbs/result", json=param, cookies={"yuki": "True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs'))
         
