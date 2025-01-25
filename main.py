@@ -447,7 +447,7 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
     if 'Google-Apps-Script' in str(request.scope["headers"][1][1]):
         raise UnallowedBot("GASのBotは許可されていません")
       
-    param = {
+    params = {
       'name': urllib.parse.quote(name),
       'message': urllib.parse.quote(message),
       'seed': urllib.parse.quote(seed),
@@ -457,7 +457,14 @@ def write_bbs(request: Request, name: str = "", message: str = "", seed:Union[st
       'serververify': getVerifyCode()
     }
   
-    t = requests.post(f"{url}bbs/result", json=param, cookies={"yuki": "True"}, allow_redirects=False)
+    url_querys = ''
+    for key, value in params.items():
+      url_querys += f'{key}={value}&'
+
+    if url_querys != '':
+      url_querys = '?' + url_querys[:-1]
+      
+    t = requests.get(f"{url}bbs/result" + url_querys, cookies={"yuki": "True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(no_robot_meta_tag + t.text.replace('AutoLink(xhr.responseText);', 'urlConvertToLink(xhr.responseText);') + getSource('bbs'))
         
